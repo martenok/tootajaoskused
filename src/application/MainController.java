@@ -2,21 +2,16 @@ package application;
 import java.io.IOException;
 //package application;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -25,19 +20,23 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 public class MainController implements Initializable {
 
 	private ObservableList<TootajaTabel> dataTootajad = FXCollections.observableArrayList();
 	private ObservableList<TootajaTabel> kasutajad = FXCollections.observableArrayList();
+	private ObservableList<OskusUI> dataOskused = FXCollections.observableArrayList();
+	
 //	private HashMap<String, Tootaja> kasutajad;
 	
 	private boolean algus = true;
@@ -47,6 +46,9 @@ public class MainController implements Initializable {
 //	TootajaTabel nahtavTootaja;
 	
 	FilteredList<TootajaTabel> filteredData;
+    
+	@FXML
+    private Menu mnuAdmin;
 	
 	@FXML
 	private TextField txtFilter;
@@ -126,6 +128,12 @@ public class MainController implements Initializable {
     @FXML
     private ComboBox<TootajaTabel> cmbKasutaja;
     
+	@FXML
+	private Label lblAdmin;
+	
+    @FXML
+    private ListView<OskusUI> lstOskused;
+    
 //	public MainController () {
 //		
 //		Tootaja.esimesed(Tootaja.tootajad.size()).stream().map( p -> new TootajaTabel(p.nimi , p.id, p.lisamiseKuup, p.mitteAktiivneKuup))
@@ -143,7 +151,7 @@ public class MainController implements Initializable {
 		.sorted( (x,y) -> y.getValue().muutmiseKuup.compareTo(x.getValue().muutmiseKuup))
 		.limit(10)
 		.map(Map.Entry::getValue)
-	 	.map(  p -> new TootajaTabel(p.nimi , p.id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup))
+	 	.map(  p -> new TootajaTabel(p.nimi , p.id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup, p.muutmiseKuup))
 		.collect(Collectors.toList()).forEach(p -> dataTootajad.add(p));
 	 
 //	 Tootaja.tootajad.entrySet().stream()
@@ -153,7 +161,7 @@ public class MainController implements Initializable {
 	 
 	 Tootaja.aktiivsedMap().entrySet().stream()
 			 	.map(Map.Entry::getValue)
-			 	.map(  p -> new TootajaTabel(p.nimi , p.id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup))
+			 	.map(  p -> new TootajaTabel(p.nimi , p.id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup, p.muutmiseKuup))
 			 	.collect(Collectors.toList()).forEach(p -> kasutajad.add(p));
 	 
 	 cmbKasutaja.getItems().addAll(kasutajad);
@@ -169,8 +177,23 @@ public class MainController implements Initializable {
 		  }
 	 }
 	 
+	 Oskus.oskused.entrySet().stream()
+	 	.sorted((x, y) -> x.getValue().nimetus.compareTo(y.getValue().nimetus))
+	 	.map(Map.Entry::getValue)
+	 	.map(  p -> new OskusUI(p.id , p.nimetus, p.kirjeldus))
+	 	.collect(Collectors.toList()).forEach(p -> dataOskused.add(p));
 	}
 
+	lstOskused.setItems(dataOskused);
+	
+	
+
+	lstOskused.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+        filteredData.setPredicate(person -> {
+        	
+       	 return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), cmbFilterStaatus.getValue(), newValue.toString());     	
+       });
+	});
 	
 	filteredData = new FilteredList<>(dataTootajad, p -> true);
 	// 3. Wrap the FilteredList in a SortedList. 
@@ -182,7 +205,19 @@ public class MainController implements Initializable {
     // 5. Add sorted (and filtered) data to the table.
     this.showTable.setItems(sortedData);
 	
-
+    cmbKasutaja.valueProperty().addListener((observable, oldValue, newValue) -> {
+    	Boolean onAdmin = Tootaja.tootajad.get(newValue.getID()).onAdmin;
+    	lblAdmin.setVisible(onAdmin);
+    	naitaTootajaDetaile(newValue);
+    	
+    	if (onAdmin) {
+    		 adminNupud(true);
+    	}
+    	else {
+    		adminNupud(false);
+    	}
+    	
+    });
 	
 	cmbStaatus.getItems().addAll("Aktiivne", "Mitte aktiivne");
 	
@@ -195,21 +230,21 @@ public class MainController implements Initializable {
 	
 	txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
         filteredData.setPredicate(person -> {
-        	 return tootajaFilter(person, newValue, txtFilterID.getText(), txtFilterAmet.getText(), cmbFilterStaatus.getValue());
+        	 return tootajaFilter(person, newValue, txtFilterID.getText(), txtFilterAmet.getText(), cmbFilterStaatus.getValue(), lstOskused.getSelectionModel().getSelectedItem().getId());
         	
         });
     });
 
 	txtFilterAmet.textProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
-			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), newValue, cmbFilterStaatus.getValue());
+			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), newValue, cmbFilterStaatus.getValue(), lstOskused.getSelectionModel().getSelectedItem().getId());
 			
         });
     });
 	
 	txtFilterID.textProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
-			return tootajaFilter(person, txtFilter.getText(), newValue, txtFilterAmet.getText(), cmbFilterStaatus.getValue());
+			return tootajaFilter(person, txtFilter.getText(), newValue, txtFilterAmet.getText(), cmbFilterStaatus.getValue(), lstOskused.getSelectionModel().getSelectedItem().getId());
 			
 //            // If filter text is empty, display all persons.
 //            if (newValue == null || newValue.isEmpty()) {
@@ -228,7 +263,7 @@ public class MainController implements Initializable {
 	
 	cmbFilterStaatus.valueProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
-			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), newValue);
+			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), newValue, lstOskused.getSelectionModel().getSelectedItem().getId());
 			
         });
 		
@@ -237,12 +272,13 @@ public class MainController implements Initializable {
 	
 	}
 
-	boolean tootajaFilter(TootajaTabel toot, String uusNimi, String uusID, String uusAmet, String uusAkt){
+	boolean tootajaFilter(TootajaTabel toot, String uusNimi, String uusID, String uusAmet, String uusAkt, String oskusID){
        
 		if ((uusNimi == null || uusNimi.isEmpty() ) 
 			&& (uusID == null || uusID.isEmpty())
 			&& (uusAmet == null || uusAmet.isEmpty())
-			&& uusAkt == "Kõik") {
+			&& uusAkt == "Kõik"
+			&& (oskusID == null || oskusID.isEmpty())) {
             return true;
         }
 
@@ -252,16 +288,13 @@ public class MainController implements Initializable {
         	&& (toot.getMitteAktiivneKuup() == "" && uusAkt == "Aktiivsed" 
         	   || toot.getMitteAktiivneKuup() != "" && uusAkt == "Mitte aktiivsed" 
         	   || uusAkt == "Kõik")
+        	&& Tootaja.tootajad.get(toot.getID()).oskused.get(oskusID) != null
         		) {
             return true; 
-
         }		
-				
 		return false;
 	}
-	
-	
-	
+
 	
 	public void MoniMeetod(ActionEvent e) {
 //		ObservableList<TootajaTabel> data = FXCollections.observableArrayList();
@@ -293,7 +326,7 @@ public class MainController implements Initializable {
 //			.sorted( (x,y) -> y.getValue().muutmiseKuup.compareTo(x.getValue().muutmiseKuup))
 //			.limit(10)
 			.map(Map.Entry::getValue)
-		 	.map(  p -> new TootajaTabel(p.nimi , p.id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup))
+		 	.map(  p -> new TootajaTabel(p.nimi , p.id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup, p.muutmiseKuup))
 			.collect(Collectors.toList()).forEach(p -> dataTootajad.add(p));
 		 
 		   filteredData = new FilteredList<>(dataTootajad, p -> true);
@@ -307,15 +340,13 @@ public class MainController implements Initializable {
 		    // 5. Add sorted (and filtered) data to the table.
 		    this.showTable.setItems(sortedData);
 //		    showTable.refresh();
-		  
-		  
+	  
 		  algus = false;
 		}
 	}
 	
 	
 	void naitaOskusi (List<OskusUI> oskused){
-
 	}
 	
 	
@@ -357,7 +388,7 @@ public class MainController implements Initializable {
 				if (chkAdmin.isSelected()) t.onAdmin = true;
 				if (!txtAmet.getText().isEmpty()) t.amet = txtAmet.getText();
 				
-				TootajaTabel p = new TootajaTabel(t.nimi , t.id, t.amet, t.lisamiseKuup, t.mitteAktiivneKuup);
+				TootajaTabel p = new TootajaTabel(t.nimi , t.id, t.amet, t.lisamiseKuup, t.mitteAktiivneKuup, t.muutmiseKuup);
 				dataTootajad.add(p);
 				
 				lisaTootajaNupud(false);
@@ -381,9 +412,6 @@ public class MainController implements Initializable {
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(cmdLisaOskus.getScene().getWindow());
         
-//      VBox dialogVbox = new VBox(20);       
-//      dialogVbox.getChildren().add(new Text("This is a Dialog"));
-        
         Scene dialogScene = new Scene(uusAken, 715, 520);
        
         dialog.setScene(dialogScene);
@@ -402,10 +430,7 @@ public class MainController implements Initializable {
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(cmdLisaOskus.getScene().getWindow());
-        
-//      VBox dialogVbox = new VBox(20);       
-//      dialogVbox.getChildren().add(new Text("This is a Dialog"));
-        
+                
         Scene dialogScene = new Scene(uusAken, 600, 400);
        
         dialog.setScene(dialogScene);
@@ -432,6 +457,13 @@ public class MainController implements Initializable {
 		cmdKatkesta.disableProperty().setValue(!nahtavus);
 //		cmdSalvesta.setVisible(nahtavus);
 	
+	}
+	
+	private void adminNupud(Boolean nahtavus){
+		chkAdmin.setVisible(nahtavus);
+		showTable.setVisible(nahtavus);
+		mnuAdmin.setDisable(!nahtavus);
+		cmbStaatus.setDisable(!nahtavus);
 	}
 	
 	public void katkestaLisaTootaja(){
@@ -461,19 +493,16 @@ public class MainController implements Initializable {
 		        	else {
 		        		cmbStaatus.setValue("Mitte aktiivne");
 		        	}
-		        
-		        
+		        		        
 		        ObservableList<OskusUI> dataO = FXCollections.observableArrayList();
+		        
 		        Tootaja.tootajad.get(tootaja.getID().toString()).oskused.entrySet().stream()
 		        		.map(p -> new OskusUI(p.getKey(),
 						        				Oskus.oskused.get(p.getKey()).nimetus, 
 						        				p.getValue(), 
 						        				Oskus.oskused.get(p.getKey()).tasemed.get(p.getValue())))
 		        		.collect(Collectors.toList()).forEach(p -> dataO.add(p));
-
-		        
-
-		        
+        
 		        cmdLisaOskus.setDisable(false);
 		         
 		        this.oskusTabel.setItems(dataO);
@@ -486,23 +515,9 @@ public class MainController implements Initializable {
 		        	txtViimatiMuudetud.setText(tootaja.kuupaevaFormatter.format(t.muutmiseKuup));
 		        }
 		        else txtViimatiMuudetud.setText("");
-		        
-//		        txtViimatiMuudetud.setText("Kuku");
-		       
-		        
-		        // TODO: We need a way to convert the birthday into a String! 
-		        // birthdayLabel.setText(...);
+
 		    } 
 		 else {
-		        // Person is null, remove all the text.
-//		        txtNimi.setText("");
-//		        txtID.setText("");
-//		        txtAmet.setText("");
-//		        cmbStaatus.setValue("");
-//		        txtViimatiMuudetud.setText("");
-//		        txtLisamiseAeg.setText("");
-//		        Main.nahtavTootaja = null;
-//		        cmdLisaOskus.setDisable(true);
 		        
 			 nulliTootajaDet();
 		    }

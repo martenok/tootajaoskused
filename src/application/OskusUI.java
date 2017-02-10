@@ -19,6 +19,16 @@ public class OskusUI {
 		this.kirjeldus = new SimpleStringProperty(kirjeldus);
 		
 	}
+	
+	public OskusUI(String id, String nimetus, String kirjeldus) {
+
+		this.id = new SimpleStringProperty(id);
+		this.nimetus = new SimpleStringProperty(nimetus);
+		this.kirjeldus = new SimpleStringProperty(kirjeldus);
+		
+	}
+	
+	
 
 	public String getId() {
 		return id.get();
@@ -53,8 +63,9 @@ public class OskusUI {
 	}
 
 	
-
-	
+	public String toString(){
+		return String.format("%s", this.getNimetus());
+	}
 	
 
 }

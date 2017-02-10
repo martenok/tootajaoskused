@@ -12,16 +12,18 @@ public class TootajaTabel {
 	SimpleStringProperty amet;
 	SimpleStringProperty lisamiseKuup;
 	SimpleStringProperty mitteAktiivneKuup;
+	SimpleStringProperty muutmiseKuup;
 	
 	
 	DateTimeFormatter kuupaevaFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 	
-	TootajaTabel(String nimi, String ID, String amet, LocalDateTime lisamiseKuup, LocalDateTime mitteAktiivneKuup) {
+	TootajaTabel(String nimi, String ID, String amet, LocalDateTime lisamiseKuup, LocalDateTime mitteAktiivneKuup, LocalDateTime muutmiseKuup) {
 		this.nimi = new SimpleStringProperty(nimi);
 		this.ID = new SimpleStringProperty(ID);
 		this.amet = new SimpleStringProperty(amet);
 		this.lisamiseKuup = new SimpleStringProperty(kuupaevaFormatter.format(lisamiseKuup));
 		this.mitteAktiivneKuup = new SimpleStringProperty( (mitteAktiivneKuup != null) ? kuupaevaFormatter.format(mitteAktiivneKuup): "");
+		this.muutmiseKuup = new SimpleStringProperty( (muutmiseKuup != null) ? kuupaevaFormatter.format(muutmiseKuup): "");
 		
 	}
 	
@@ -51,15 +53,23 @@ public class TootajaTabel {
 		return lisamiseKuup.get();
 	}
 	public void setLisamiseKuup(String lisamiseKuup) {
-		this.lisamiseKuup.set(lisamiseKuup);;
+		this.lisamiseKuup.set(lisamiseKuup);
 	}
 	public String getMitteAktiivneKuup() {
 		return mitteAktiivneKuup.get();
 	}
 	public void setMitteAktiivneKuup(String mitteAktiivneKuup) {
-		this.mitteAktiivneKuup.set(mitteAktiivneKuup);;
+		this.mitteAktiivneKuup.set(mitteAktiivneKuup);
 	}
 
+	public String getMuutmiseKuup() {
+		return muutmiseKuup.get();
+	}
+	
+	public void setMuutmiseKuup(String muutmiseKuup) {
+		this.muutmiseKuup.set(muutmiseKuup);
+	}
+	
 	public String toString(){
 		return String.format("%s (%s)", this.getNimi(), this.getID());
 	}

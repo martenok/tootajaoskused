@@ -25,7 +25,7 @@
               <MenuItem mnemonicParsing="false" text="Pane kinni" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Administreerimine">
+          <Menu fx:id="mnuAdmin" mnemonicParsing="false" text="Administreerimine">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#lisaTootaja" text="Lisa töötaja" />
                   <MenuItem mnemonicParsing="false" onAction="#lisaOskusSysteemi" text="Lisa Oskus" />
@@ -54,9 +54,9 @@
                               <javafx.scene.control.cell.PropertyValueFactory property="amet" />
                            </cellValueFactory>
                         </TableColumn>
-                        <TableColumn fx:id="veergLisatud" prefWidth="115.0" text="Lisamise aeg">
+                        <TableColumn fx:id="veergLisatud" prefWidth="115.0" text="Muutmise aeg">
                           <cellValueFactory>
-                        	<javafx.scene.control.cell.PropertyValueFactory property="lisamiseKuup" /> 
+                        	<javafx.scene.control.cell.PropertyValueFactory property="muutmiseKuup" /> 
             			  </cellValueFactory>   
                         </TableColumn>
                         <TableColumn fx:id="veergAktiivne" prefWidth="117.0" text="Staatus">
