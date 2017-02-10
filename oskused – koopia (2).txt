@@ -1,0 +1,10 @@
+﻿O4;prantsuse keel;Suhtlemine prantslastega;** SÜSTEEM **;Taset pole määratud;Oskab öelda tere;Oskab öelda nime;Suudab vestelda kohvikus;Väljendab ennast vabalt
+O5;java;Arvuti piinamine;** SÜSTEEM **;Taset pole määratud;Jooksutab arvuti kokku
+O6;Kalapüük;Kalade veest välja sikutamine;38201020255;Taset pole määratud
+O7;Seente korjamine;Seente metsast välja toomine;38201020255;Taset pole määratud
+O8;Kokkamine;Söögitegmine;38201020255;Taset pole määratud
+O9;Aferism;Lollidelt raha ära võtmine;38201020255;Taset pole määratud;Kuus 300 EUR;Kuus 500 EUR
+﻿O1;﻿excel;Exceliga töötamine;** SÜSTEEM **;Taset pole määratud;Oskab numbreid sisestada;Tunneb valemeid;Teab makrosid;VBA
+﻿O3;inglise keel;Suhtlemine inglastega;** SÜSTEEM **;Taset pole määratud;Oskab öelda tere;Oskab öelda nime;Suudab vestelda kohvikus;Väljendab ennast vabalt
+O11;Aferism;Lollidelt raha ära võtmine;38201020255;Taset pole määratud
+﻿O2;leiutamine;Vanast uus;** SÜSTEEM **;Taset pole määratud;Lööb naela põlve;Oskab mudelit teha;Oskab teha töötavat mudelit;Oskab teha kasuliku asja
