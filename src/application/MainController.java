@@ -153,11 +153,16 @@ public class MainController implements Initializable {
 		.map(Map.Entry::getValue)
 	 	.map(  p -> new TootajaTabel(p.nimi , p.id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup, p.muutmiseKuup))
 		.collect(Collectors.toList()).forEach(p -> dataTootajad.add(p));
-	 
-//	 Tootaja.tootajad.entrySet().stream()
-//	 	.filter(a -> a.getValue().mitteAktiivneKuup == null)
-//	 	.map(p -> new TootajaTabel(p.getValue().nimi , p..id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup))
-//	 	.collect(Collectors.toList()).forEach(p -> kasutajad.add(p));
+	
+	filteredData = new FilteredList<>(dataTootajad, p -> true);
+	// 3. Wrap the FilteredList in a SortedList. 
+    SortedList<TootajaTabel> sortedData = new SortedList<>(filteredData);
+
+    // 4. Bind the SortedList comparator to the TableView comparator.
+    sortedData.comparatorProperty().bind(showTable.comparatorProperty());
+
+    // 5. Add sorted (and filtered) data to the table.
+    this.showTable.setItems(sortedData);	 
 	 
 	 Tootaja.aktiivsedMap().entrySet().stream()
 			 	.map(Map.Entry::getValue)
@@ -170,7 +175,7 @@ public class MainController implements Initializable {
 	 for (TootajaTabel i : kasutajad){
 	  System.out.println(i.getID());
 		  if (i.getID().equals(Main.praeguneKasutaja.id)) {
-			  String s = i.toString();
+			  
 			  cmbKasutaja.setValue(i);
 			  
 			  break;
@@ -186,24 +191,16 @@ public class MainController implements Initializable {
 
 	lstOskused.setItems(dataOskused);
 	
-	
 
+    
 	lstOskused.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
         filteredData.setPredicate(person -> {
-        	
-       	 return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), cmbFilterStaatus.getValue(), newValue.toString());     	
+        	OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
+//        	System.out.println(o.id.getValue());
+//        	System.out.println(Tootaja.tootajad.get(person.getID()).oskused.get(o.id.getValue()));
+       	 return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), cmbFilterStaatus.getValue(), o);     	
        });
-	});
-	
-	filteredData = new FilteredList<>(dataTootajad, p -> true);
-	// 3. Wrap the FilteredList in a SortedList. 
-    SortedList<TootajaTabel> sortedData = new SortedList<>(filteredData);
-
-    // 4. Bind the SortedList comparator to the TableView comparator.
-    sortedData.comparatorProperty().bind(showTable.comparatorProperty());
-
-    // 5. Add sorted (and filtered) data to the table.
-    this.showTable.setItems(sortedData);
+	});	
 	
     cmbKasutaja.valueProperty().addListener((observable, oldValue, newValue) -> {
     	Boolean onAdmin = Tootaja.tootajad.get(newValue.getID()).onAdmin;
@@ -230,21 +227,25 @@ public class MainController implements Initializable {
 	
 	txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
         filteredData.setPredicate(person -> {
-        	 return tootajaFilter(person, newValue, txtFilterID.getText(), txtFilterAmet.getText(), cmbFilterStaatus.getValue(), lstOskused.getSelectionModel().getSelectedItem().getId());
+        	System.out.println(newValue);
+        	OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
+        	return tootajaFilter(person, newValue, txtFilterID.getText(), txtFilterAmet.getText(), cmbFilterStaatus.getValue(), o);
         	
         });
     });
 
 	txtFilterAmet.textProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
-			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), newValue, cmbFilterStaatus.getValue(), lstOskused.getSelectionModel().getSelectedItem().getId());
+			OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
+			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), newValue, cmbFilterStaatus.getValue(), o);
 			
         });
     });
 	
 	txtFilterID.textProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
-			return tootajaFilter(person, txtFilter.getText(), newValue, txtFilterAmet.getText(), cmbFilterStaatus.getValue(), lstOskused.getSelectionModel().getSelectedItem().getId());
+			OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
+			return tootajaFilter(person, txtFilter.getText(), newValue, txtFilterAmet.getText(), cmbFilterStaatus.getValue(), o);
 			
 //            // If filter text is empty, display all persons.
 //            if (newValue == null || newValue.isEmpty()) {
@@ -263,7 +264,8 @@ public class MainController implements Initializable {
 	
 	cmbFilterStaatus.valueProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
-			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), newValue, lstOskused.getSelectionModel().getSelectedItem().getId());
+			OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
+			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), newValue, o);
 			
         });
 		
@@ -272,13 +274,13 @@ public class MainController implements Initializable {
 	
 	}
 
-	boolean tootajaFilter(TootajaTabel toot, String uusNimi, String uusID, String uusAmet, String uusAkt, String oskusID){
+	boolean tootajaFilter(TootajaTabel toot, String uusNimi, String uusID, String uusAmet, String uusAkt, OskusUI oskus){
        
 		if ((uusNimi == null || uusNimi.isEmpty() ) 
 			&& (uusID == null || uusID.isEmpty())
 			&& (uusAmet == null || uusAmet.isEmpty())
 			&& uusAkt == "Kõik"
-			&& (oskusID == null || oskusID.isEmpty())) {
+			&& (oskus == null )) {
             return true;
         }
 
@@ -288,7 +290,7 @@ public class MainController implements Initializable {
         	&& (toot.getMitteAktiivneKuup() == "" && uusAkt == "Aktiivsed" 
         	   || toot.getMitteAktiivneKuup() != "" && uusAkt == "Mitte aktiivsed" 
         	   || uusAkt == "Kõik")
-        	&& Tootaja.tootajad.get(toot.getID()).oskused.get(oskusID) != null
+        	&& (oskus != null ? Tootaja.tootajad.get(toot.getID()).oskused.get(oskus.id.getValue()) != null : true)
         		) {
             return true; 
         }		
@@ -306,15 +308,7 @@ public class MainController implements Initializable {
 
 	public void nimeFilter(ActionEvent e) {
 		koikTootajad();
-//		String s =  txtFilter.getText();
-//		
-//		ObservableList<TootajaTabel> data = FXCollections.observableArrayList();
-//		
-//		Tootaja.leiaNimega(s).stream()
-//		.map( p -> new TootajaTabel(p.nimi , p.id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup))
-//		.collect(Collectors.toList()).forEach(p -> data.add(p));
-//		
-//		this.showTable.setItems(data);
+
 	}
 	
 	private void koikTootajad(){
