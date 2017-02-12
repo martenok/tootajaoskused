@@ -55,7 +55,13 @@ public class Muudatus {
 				.collect(Collectors.toList()).subList(0, mitu);
 	}
 
-	
+	static List<Muudatus> viimasedMuudatused (String ID){
+		return muutused.stream()
+				.filter(p -> p.mida.equals(ID))
+				.sorted((x, y) -> y.millal.compareTo(x.millal))
+				.collect(Collectors.toList());
+	}
+
 	
 	
 	public String toString(){

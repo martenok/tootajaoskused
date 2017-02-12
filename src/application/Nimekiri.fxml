@@ -35,9 +35,9 @@
       </MenuBar>
       <SplitPane dividerPositions="0.48531139835487663" layoutX="6.0" layoutY="25.0" orientation="VERTICAL" prefHeight="835.0" prefWidth="918.0">
         <items>
-          <AnchorPane fx:id="acpYlemine" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+          <AnchorPane fx:id="acpYlemine" minHeight="0.0" minWidth="0.0" prefHeight="370.0" prefWidth="916.0">
                <children>
-                  <TableView fx:id="showTable" accessibleRole="IMAGE_VIEW" editable="true" layoutX="14.0" layoutY="73.0" prefHeight="292.0" prefWidth="657.0" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="245.0" AnchorPane.topAnchor="73.0">
+                  <TableView fx:id="showTable" accessibleRole="IMAGE_VIEW" layoutX="14.0" layoutY="73.0" prefHeight="292.0" prefWidth="657.0" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="245.0" AnchorPane.topAnchor="73.0">
                     <columns>
                       <TableColumn fx:id="veergNimi" editable="false" prefWidth="138.0" text="Nimi">
                          <cellValueFactory>
@@ -66,16 +66,17 @@
                         </TableColumn>
                     </columns>
                   </TableView>
-                  <Label layoutX="31.0" layoutY="14.0" text="Filter" />
+                  <Label layoutX="14.0" layoutY="14.0" text="Filter" />
                   <TextField fx:id="txtFilter" layoutX="14.0" layoutY="35.0" prefHeight="25.0" prefWidth="139.0" />
                   <TextField fx:id="txtFilterID" layoutX="152.0" layoutY="35.0" prefHeight="25.0" prefWidth="127.0" />
                   <TextField fx:id="txtFilterAmet" layoutX="278.0" layoutY="35.0" prefHeight="25.0" prefWidth="113.0" />
                   <ComboBox fx:id="cmbFilterStaatus" layoutX="509.0" layoutY="36.0" prefHeight="25.0" prefWidth="119.0" visibleRowCount="3" />
                   <Button fx:id="nuppFiltrNimi" layoutX="512.0" layoutY="4.0" mnemonicParsing="false" onAction="#nimeFilter" prefHeight="25.0" prefWidth="113.0" text="Kõik töötajad" />
-                  <ListView fx:id="lstOskused" layoutX="689.0" layoutY="73.0" prefHeight="292.0" prefWidth="200.0" />
-                  <ComboBox fx:id="cmbKasutaja" layoutX="690.0" layoutY="35.0" prefHeight="25.0" prefWidth="200.0" />
-                  <Label layoutX="714.0" layoutY="14.0" text="Kasutaja" />
-                  <Label fx:id="lblAdmin" layoutX="823.0" layoutY="14.0" text="(admin)" />
+                  <ListView fx:id="lstOskused" layoutX="689.0" layoutY="87.0" prefHeight="278.0" prefWidth="200.0" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="689.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="87.0" />
+                  <ComboBox fx:id="cmbKasutaja" layoutX="692.0" layoutY="35.0" prefHeight="25.0" prefWidth="193.0" />
+                  <Label layoutX="692.0" layoutY="14.0" text="Kasutaja" />
+                  <Label fx:id="lblAdmin" layoutX="844.0" layoutY="14.0" text="(admin)" />
+                  <TextArea fx:id="txtMuudatused" editable="false" layoutX="14.0" layoutY="71.0" prefHeight="292.0" prefWidth="876.0" visible="false" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="26.0" AnchorPane.topAnchor="70.0" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="289.0" prefWidth="708.0">

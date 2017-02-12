@@ -43,14 +43,11 @@ public class LoeDemoAndmed {
 			case 4: t.lisamiseKuup = LocalDateTime.parse(tykid[3]);
 			case 3: t.amet = tykid[2];
 //			default: break;
-			}
-			
+			}	
 		}
-	
 	}
 	
-	
-	
+
 	static void SalvestaTootajad(){
 		List <String> read = new ArrayList<String>();
 		
@@ -80,18 +77,8 @@ public class LoeDemoAndmed {
 			List<String> tasemed = new ArrayList<String>();
 			tasemed.addAll(Arrays.asList(tykid).subList(4, tykid.length));
 			
-			o.lisaTasemed(tasemed, Main.praeguneKasutaja.id);
-			
-//			switch (tykid.length) {
-//			case 9: o.tasemed.put(Tase.VägaHea, tykid[8]);
-//			case 8: o.tasemed.put(Tase.Hea, tykid[7]);
-//			case 7: o.tasemed.put(Tase.Keskmine, tykid[6]);
-//			case 6: o.tasemed.put(Tase.Nõrk, tykid[5]);
-//			case 5: o.tasemed.put(Tase.Määramata, tykid[4]);
-//			
-//			}
-		}
-			
+			o.lisaTasemed(tasemed, Main.praeguneKasutaja.id);		
+		}		
 	}
 	
 
@@ -109,11 +96,10 @@ public class LoeDemoAndmed {
 			
 			s = String.format("%s;%s;%s;%s;%s", x.id, x.nimetus, x.kirjeldus, x.lisaja, k);
 			
-			System.out.println(s);
-	
+//			System.out.println(s);	
 			read.add(s);
 		}
-			
+		
 		SalvestaRead(oskFailSalv, read);
 	}
 	
@@ -125,10 +111,8 @@ public class LoeDemoAndmed {
 		for (String s: read){
 			String tykid[] = s.split(";");
 					
-			Tootaja.tootajad.get(tykid[0]).lisaOskus(Oskus.oskused.get(tykid[1]), Tase.valueOf(tykid[2]), false);
-			
-		}
-		
+			Tootaja.tootajad.get(tykid[0]).lisaOskus(Oskus.oskused.get(tykid[1]), Tase.valueOf(tykid[2]), false);			
+		}	
 	}
 	
 	
@@ -137,25 +121,16 @@ public class LoeDemoAndmed {
 		
 		String s;
 		
-		for (Tootaja x : Tootaja.tootajad.values()){
-			
+		for (Tootaja x : Tootaja.tootajad.values()){	
 			if (x.oskused.size() > 0) {
-				
 				for (String y : x.oskused.keySet() ){
 					
 					s = String.format("%s;%s;%s", x.id, y, x.oskused.get(y));
-				
-					System.out.println(s);
-					
+//					System.out.println(s);
 					read.add(s);
 				}
-			
-
 			}
 		}
-			
-		
-		
 		SalvestaRead(inimOskused, read);
 	}
 	
@@ -176,7 +151,6 @@ public class LoeDemoAndmed {
 			br.close();
 			
 			}
-			
 			catch (Exception ex) {}
 		
 		return read;
@@ -185,18 +159,13 @@ public class LoeDemoAndmed {
 	
 	public static void SalvestaRead(String failinimi, List<String> read) {
 		
-		try (BufferedWriter bw = new BufferedWriter(
-				new FileWriter(failinimi))){
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(failinimi))){
 			
 			for (String x: read){
 				bw.write(x);
 				bw.newLine();
-			}
-		
-		}
-			
-		catch (Exception ex) {}
-		
+			}	
+		}		
+		catch (Exception ex) {}		
 	}
-
 }

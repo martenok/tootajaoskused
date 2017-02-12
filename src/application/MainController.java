@@ -25,6 +25,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.AnchorPane;
@@ -134,6 +135,12 @@ public class MainController implements Initializable {
     @FXML
     private ListView<OskusUI> lstOskused;
     
+    @FXML
+	private Button nuppFiltrNimi;
+    
+    @FXML
+    private TextArea txtMuudatused;
+    
 //	public MainController () {
 //		
 //		Tootaja.esimesed(Tootaja.tootajad.size()).stream().map( p -> new TootajaTabel(p.nimi , p.id, p.lisamiseKuup, p.mitteAktiivneKuup))
@@ -164,7 +171,7 @@ public class MainController implements Initializable {
     // 5. Add sorted (and filtered) data to the table.
     this.showTable.setItems(sortedData);	 
 	 
-	 Tootaja.aktiivsedMap().entrySet().stream()
+	Tootaja.aktiivsedMap().entrySet().stream()
 			 	.map(Map.Entry::getValue)
 			 	.map(  p -> new TootajaTabel(p.nimi , p.id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup, p.muutmiseKuup))
 			 	.collect(Collectors.toList()).forEach(p -> kasutajad.add(p));
@@ -208,9 +215,15 @@ public class MainController implements Initializable {
     	naitaTootajaDetaile(newValue);
     	
     	if (onAdmin) {
-    		 adminNupud(true);
+    		txtMuudatused.setText("");
+    		adminNupud(true);
     	}
     	else {
+    		
+    		txtMuudatused.setText(Muudatus.viimasedMuudatused(newValue.getID().toString()).stream()
+    				.map(p -> p.toString())
+    				.collect(Collectors.joining("\n")));
+    		
     		adminNupud(false);
     	}
     	
@@ -274,8 +287,7 @@ public class MainController implements Initializable {
 	
 	}
 
-	boolean tootajaFilter(TootajaTabel toot, String uusNimi, String uusID, String uusAmet, String uusAkt, OskusUI oskus){
-       
+	boolean tootajaFilter(TootajaTabel toot, String uusNimi, String uusID, String uusAmet, String uusAkt, OskusUI oskus){   
 		if ((uusNimi == null || uusNimi.isEmpty() ) 
 			&& (uusID == null || uusID.isEmpty())
 			&& (uusAmet == null || uusAmet.isEmpty())
@@ -283,7 +295,6 @@ public class MainController implements Initializable {
 			&& (oskus == null )) {
             return true;
         }
-
         if (toot.getID().contains(uusID) 
         	&& toot.getNimi().contains(uusNimi)
         	&& toot.getAmet().contains(uusAmet)	
@@ -291,7 +302,7 @@ public class MainController implements Initializable {
         	   || toot.getMitteAktiivneKuup() != "" && uusAkt == "Mitte aktiivsed" 
         	   || uusAkt == "Kõik")
         	&& (oskus != null ? Tootaja.tootajad.get(toot.getID()).oskused.get(oskus.id.getValue()) != null : true)
-        		) {
+        	) {
             return true; 
         }		
 		return false;
@@ -387,16 +398,14 @@ public class MainController implements Initializable {
 				
 				lisaTootajaNupud(false);
 				
-				tootajaMuutmine = true;
-				
+				tootajaMuutmine = true;	
 			}
 		}
 		
-		
 		koikTootajad();
 		showTable.refresh();
-		
 	}
+	
 	
 	public void lisaOskusSysteemi() throws IOException{
 		
@@ -412,7 +421,6 @@ public class MainController implements Initializable {
         dialog.setTitle("Lisa oskus");
         
         dialog.show();
-		
 	}
 	
 
@@ -430,8 +438,7 @@ public class MainController implements Initializable {
         dialog.setScene(dialogScene);
         dialog.setTitle("Lisa oskus");
         
-        dialog.show();
-	       
+        dialog.show();    
 	 }
 
 	public void lisaTootaja(ActionEvent e){
@@ -441,7 +448,6 @@ public class MainController implements Initializable {
 		lisaTootajaNupud(true);
 		
 		tootajaMuutmine = false;
-		
 	}
 	
 	private void lisaTootajaNupud(Boolean nahtavus){
@@ -458,6 +464,12 @@ public class MainController implements Initializable {
 		showTable.setVisible(nahtavus);
 		mnuAdmin.setDisable(!nahtavus);
 		cmbStaatus.setDisable(!nahtavus);
+		nuppFiltrNimi.setVisible(nahtavus);
+		cmbFilterStaatus.setVisible(nahtavus);
+		txtFilter.setVisible(nahtavus);
+		txtFilterID.setVisible(nahtavus);
+		txtFilterAmet.setVisible(nahtavus);
+		txtMuudatused.setVisible(!nahtavus);
 	}
 	
 	public void katkestaLisaTootaja(){
