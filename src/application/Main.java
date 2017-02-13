@@ -17,12 +17,20 @@ public class Main extends Application{
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			Parent root = FXMLLoader.load(getClass().getResource("/application/Nimekiri.fxml"));
 			
+			
+			FXMLLoader laadija = new FXMLLoader(getClass().getResource("/application/Nimekiri.fxml"));
+			
+			Parent root = laadija.load();
+			MainController mc = (MainController) laadija.getController();
+
 			Scene scene = new Scene(root,935,871);
+			
 //			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
+			
 			primaryStage.show();
+			
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -32,10 +40,18 @@ public class Main extends Application{
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+			
+		praeguneKasutaja = Tootaja.sysAdmin("11101010101", "***SÜSTEEM***", "Süsteemi administraator");
+		praeguneKasutaja.onAdmin=true;
 		
-		new LoeDemoAndmed();	
+		LoeDemoAndmed.LoeTootajad();
 		
 		praeguneKasutaja = Tootaja.tootajad.get("38201020255");
+		
+		Tootaja.tootajad.remove("11101010101");
+		
+		LoeDemoAndmed.loeOskused();
+		LoeDemoAndmed.loeInimOskused();	
 
 		
 		for (String x: Tootaja.tootajad.keySet()){

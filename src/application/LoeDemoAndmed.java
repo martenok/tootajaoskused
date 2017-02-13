@@ -20,23 +20,17 @@ public class LoeDemoAndmed {
 	static String oskFailSalv = "oskused.txt";
 	
 //Loe töötajad
-	LoeDemoAndmed() {
-		
-		LoeTootajad();
-		Main.praeguneKasutaja = Tootaja.tootajad.get("38201020255");
-		loeOskused();
-		loeInimOskused();
-
-	}
+	LoeDemoAndmed() {}
 	
 	
 	static void LoeTootajad(){
 		List <String> read = LoeRead(tootajadFail);
 		for (String s: read){
 			String tykid[] = s.split(";");
-			Tootaja t = Tootaja.uusTootaja(tykid[0], tykid[1]);
+			Tootaja t = Tootaja.uusTootaja(tykid[0], tykid[1], Main.praeguneKasutaja);
 			
 			switch (tykid.length) {
+			case 8: ;
 			case 7: t.mitteAktiivneKuup = (!tykid[6].equals("null")) ? LocalDateTime.parse(tykid[6])  : null;
 			case 6: t.onAdmin = Boolean.valueOf(tykid[5]);
 			case 5: t.muutmiseKuup = LocalDateTime.parse(tykid[4]);
@@ -59,7 +53,9 @@ public class LoeDemoAndmed {
 					Tootaja.tootajad.get(s).muutmiseKuup, 
 					Tootaja.tootajad.get(s).onAdmin,
 //					Tootaja.tootajad.get(s).aktiivne,
-					Tootaja.tootajad.get(s).mitteAktiivneKuup));
+					Tootaja.tootajad.get(s).mitteAktiivneKuup
+//					Tootaja.tootajad.get(s).koolitused
+					));
 		}
 	
 		SalvestaRead(tootFailSalv, read);
@@ -110,8 +106,8 @@ public class LoeDemoAndmed {
 		
 		for (String s: read){
 			String tykid[] = s.split(";");
-					
-			Tootaja.tootajad.get(tykid[0]).lisaOskus(Oskus.oskused.get(tykid[1]), Tase.valueOf(tykid[2]), false);			
+			System.out.println("---" + s);		
+			Tootaja.tootajad.get(tykid[0]).lisaOskus(Oskus.oskused.get(tykid[1]), Tase.valueOf(tykid[2]), false, Main.praeguneKasutaja);			
 		}	
 	}
 	

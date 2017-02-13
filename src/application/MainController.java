@@ -23,6 +23,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -31,6 +32,7 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class MainController implements Initializable {
 
@@ -42,14 +44,14 @@ public class MainController implements Initializable {
 	
 	private boolean algus = true;
 	private boolean tootajaMuutmine = true;
-	
+	private TootajaTabel muudetavTootaja;
 	
 //	TootajaTabel nahtavTootaja;
 	
 	FilteredList<TootajaTabel> filteredData;
     
 	@FXML
-    private Menu mnuAdmin;
+    private Menu mnuSeadistamine;
 	
 	@FXML
 	private TextField txtFilter;
@@ -141,6 +143,18 @@ public class MainController implements Initializable {
     @FXML
     private TextArea txtMuudatused;
     
+    @FXML
+    private TextArea txtKoolitused;
+    
+    @FXML
+    private Label lblFilter;
+    
+    @FXML
+    private Menu mnuLogi;
+    
+    @FXML
+    private Button btnSulgeLogi;
+    
 //	public MainController () {
 //		
 //		Tootaja.esimesed(Tootaja.tootajad.size()).stream().map( p -> new TootajaTabel(p.nimi , p.id, p.lisamiseKuup, p.mitteAktiivneKuup))
@@ -213,6 +227,7 @@ public class MainController implements Initializable {
     	Boolean onAdmin = Tootaja.tootajad.get(newValue.getID()).onAdmin;
     	lblAdmin.setVisible(onAdmin);
     	naitaTootajaDetaile(newValue);
+    	Main.praeguneKasutaja = Tootaja.tootajad.get(newValue.getID());
     	
     	if (onAdmin) {
     		txtMuudatused.setText("");
@@ -220,10 +235,7 @@ public class MainController implements Initializable {
     	}
     	else {
     		
-    		txtMuudatused.setText(Muudatus.viimasedMuudatused(newValue.getID().toString()).stream()
-    				.map(p -> p.toString())
-    				.collect(Collectors.joining("\n")));
-    		
+    		naitaTootajaLogi(newValue);
     		adminNupud(false);
     	}
     	
@@ -368,6 +380,8 @@ public class MainController implements Initializable {
 			t.amet = txtAmet.getText();
 			tootaja.setAmet(t.amet);
 			
+			t.koolitused = txtKoolitused.getText();
+			
 			t.muudaAdmin(Main.praeguneKasutaja, chkAdmin.isSelected());
 			
 			if (cmbStaatus.getValue() == "Aktiivne"){
@@ -388,7 +402,7 @@ public class MainController implements Initializable {
 			if (txtID.getText().length() == 11
 					&& !txtNimi.getText().isEmpty() ){
 				
-				Tootaja t = Tootaja.uusTootaja(txtID.getText(),  txtNimi.getText());
+				Tootaja t = Tootaja.uusTootaja(txtID.getText(),  txtNimi.getText(), Main.praeguneKasutaja);
 				
 				if (chkAdmin.isSelected()) t.onAdmin = true;
 				if (!txtAmet.getText().isEmpty()) t.amet = txtAmet.getText();
@@ -427,9 +441,17 @@ public class MainController implements Initializable {
 	public void lisaOskus(ActionEvent e) throws IOException{
 //		TootajaTabel tootaja = nahtavTootaja;
 		
-		Parent uusAken = FXMLLoader.load(getClass().getResource("/application/LisaOskusAken.fxml"));
+		
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/LisaOskusAken.fxml"));
+		
+		Parent uusAken = loader.load();
 
+		LisaOskusController loc = (LisaOskusController) loader.getController();
+		loc.mc = this;
+		loc.muudetavTootaja = muudetavTootaja;
+		
         Stage dialog = new Stage();
+        
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(cmdLisaOskus.getScene().getWindow());
                 
@@ -437,6 +459,8 @@ public class MainController implements Initializable {
        
         dialog.setScene(dialogScene);
         dialog.setTitle("Lisa oskus");
+        
+
         
         dialog.show();    
 	 }
@@ -462,7 +486,9 @@ public class MainController implements Initializable {
 	private void adminNupud(Boolean nahtavus){
 		chkAdmin.setVisible(nahtavus);
 		showTable.setVisible(nahtavus);
-		mnuAdmin.setDisable(!nahtavus);
+		mnuSeadistamine.setDisable(!nahtavus);
+		
+		mnuLogi.setDisable(!nahtavus);
 		cmbStaatus.setDisable(!nahtavus);
 		nuppFiltrNimi.setVisible(nahtavus);
 		cmbFilterStaatus.setVisible(nahtavus);
@@ -470,6 +496,7 @@ public class MainController implements Initializable {
 		txtFilterID.setVisible(nahtavus);
 		txtFilterAmet.setVisible(nahtavus);
 		txtMuudatused.setVisible(!nahtavus);
+		lblFilter.setVisible(nahtavus);
 	}
 	
 	public void katkestaLisaTootaja(){
@@ -489,9 +516,13 @@ public class MainController implements Initializable {
 		        txtID.setText(tootaja.getID());
 		        txtAmet.setText(tootaja.getAmet());
 		        
-		        Tootaja t = Tootaja.tootajad.get(tootaja.getID());
+		        muudetavTootaja = tootaja;
 		        
-		       chkAdmin.setSelected(Tootaja.tootajad.get(tootaja.getID().toString()).onAdmin);
+		        Tootaja t = Tootaja.tootajad.get(tootaja.getID());
+		       
+		        if (t.koolitused != null) txtKoolitused.setText(t.koolitused);
+		       
+		        chkAdmin.setSelected(Tootaja.tootajad.get(tootaja.getID().toString()).onAdmin);
 		       	        
 		        if (tootaja.mitteAktiivneKuup.getValue().equals("")){
 		        	cmbStaatus.setValue("Aktiivne");
@@ -547,5 +578,33 @@ public class MainController implements Initializable {
         cmdLisaOskus.setDisable(true);
 	}
 	
+	public void naitaTootajaLogi(TootajaTabel tootaja){
+		txtMuudatused.setText(Muudatus.viimasedMuudatused(tootaja.getID().toString()).stream()
+				.map(p -> p.toString())
+				.collect(Collectors.joining("\n")));
+	}
+	
+	public void naitaAdminLogi(ActionEvent e){
+		adminNupud(false);
+		btnSulgeLogi.setVisible(true);
+//		if (muudetavTootaja == null) {
+			naitaTootajaLogi(cmbKasutaja.getSelectionModel().getSelectedItem());
+//		}
+//		else naitaTootajaLogi(muudetavTootaja);
+	}
+	
+	public void sulgeAdminLogi(ActionEvent e){
+		adminNupud(true);
+		btnSulgeLogi.setVisible(false);
+	}
+	
+	public void naitaKoguLogi(ActionEvent e){
+		adminNupud(false);
+		btnSulgeLogi.setVisible(true);
+		txtMuudatused.setText(Muudatus.muutused.stream()
+				.sorted((x, y) -> y.millal.compareTo(x.millal))
+				.map(p -> p.toString())
+				.collect(Collectors.joining("\n")));
+	}
 	
 }

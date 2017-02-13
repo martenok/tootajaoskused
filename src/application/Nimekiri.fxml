@@ -20,17 +20,23 @@
    <children>
       <MenuBar layoutY="1.0" prefHeight="25.0" prefWidth="443.0">
         <menus>
-          <Menu mnemonicParsing="false" text="Töötajad">
+          <Menu mnemonicParsing="false" text="Lõpetamine">
             <items>
-              <MenuItem mnemonicParsing="false" text="Pane kinni" />
+              <MenuItem fx:id="mnuSulge" mnemonicParsing="false" text="Sulge" />
             </items>
           </Menu>
-          <Menu fx:id="mnuAdmin" mnemonicParsing="false" text="Administreerimine">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#lisaTootaja" text="Lisa töötaja" />
-                  <MenuItem mnemonicParsing="false" onAction="#lisaOskusSysteemi" text="Lisa Oskus" />
-            </items>
-          </Menu>
+            <Menu fx:id="mnuSeadistamine" mnemonicParsing="false" text="Seadistamine">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#lisaTootaja" text="Lisa töötaja" />
+                  <MenuItem mnemonicParsing="false" onAction="#lisaOskusSysteemi" text="Lisa oskus" />
+               </items>
+            </Menu>
+            <Menu fx:id="mnuLogi" mnemonicParsing="false" text="Logi">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#naitaAdminLogi" text="Töötaja logi" />
+                  <MenuItem mnemonicParsing="false" onAction="#naitaKoguLogi" text="Kogu logi" />
+               </items>
+            </Menu>
         </menus>
       </MenuBar>
       <SplitPane dividerPositions="0.48531139835487663" layoutX="6.0" layoutY="25.0" orientation="VERTICAL" prefHeight="835.0" prefWidth="918.0">
@@ -66,7 +72,7 @@
                         </TableColumn>
                     </columns>
                   </TableView>
-                  <Label layoutX="14.0" layoutY="14.0" text="Filter" />
+                  <Label fx:id="lblFilter" layoutX="14.0" layoutY="14.0" text="Filter" />
                   <TextField fx:id="txtFilter" layoutX="14.0" layoutY="35.0" prefHeight="25.0" prefWidth="139.0" />
                   <TextField fx:id="txtFilterID" layoutX="152.0" layoutY="35.0" prefHeight="25.0" prefWidth="127.0" />
                   <TextField fx:id="txtFilterAmet" layoutX="278.0" layoutY="35.0" prefHeight="25.0" prefWidth="113.0" />
@@ -77,6 +83,7 @@
                   <Label layoutX="692.0" layoutY="14.0" text="Kasutaja" />
                   <Label fx:id="lblAdmin" layoutX="844.0" layoutY="14.0" text="(admin)" />
                   <TextArea fx:id="txtMuudatused" editable="false" layoutX="14.0" layoutY="71.0" prefHeight="292.0" prefWidth="876.0" visible="false" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="26.0" AnchorPane.topAnchor="70.0" />
+                  <Button fx:id="btnSulgeLogi" layoutX="418.0" layoutY="4.0" mnemonicParsing="false" onAction="#sulgeAdminLogi" text="Sulge logi" visible="false" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="289.0" prefWidth="708.0">
@@ -100,18 +107,18 @@
                        </TableColumn>
                     </columns>
                   </TableView>
-                  <TextArea layoutX="136.0" layoutY="299.0" prefHeight="68.0" prefWidth="501.0" />
                   <TextField fx:id="txtNimi" layoutX="140.0" layoutY="14.0" />
+                  <TextField fx:id="txtID" editable="false" layoutX="140.0" layoutY="53.0" />
+                  <TextField fx:id="txtAmet" layoutX="428.0" layoutY="12.0" />
+                  <CheckBox fx:id="chkAdmin" layoutX="613.0" layoutY="18.0" mnemonicParsing="false" text="Administraator" />
+                  <TextArea fx:id="txtKoolitused" layoutX="136.0" layoutY="299.0" prefHeight="68.0" prefWidth="501.0" />
                   <Label layoutX="27.0" layoutY="18.0" text="Nimi" />
                   <Label layoutX="24.0" layoutY="57.0" text="Isikukood" />
                   <Label layoutX="26.0" layoutY="299.0" text="Koolitused" />
                   <Label layoutX="27.0" layoutY="100.0" text="Lisamise aeg" />
                   <Label layoutX="24.0" layoutY="146.0" text="Oskused" />
-                  <TextField fx:id="txtID" editable="false" layoutX="140.0" layoutY="53.0" />
                   <ComboBox fx:id="cmbStaatus" layoutX="427.0" layoutY="51.0" prefWidth="150.0" visibleRowCount="2" />
                   <Label layoutX="373.0" layoutY="54.0" text="Staatus" />
-                  <CheckBox fx:id="chkAdmin" layoutX="613.0" layoutY="18.0" mnemonicParsing="false" text="Administraator" />
-                  <TextField fx:id="txtAmet" layoutX="428.0" layoutY="12.0" />
                   <Label layoutX="378.0" layoutY="15.0" text="Amet" />
                   <Button fx:id="cmdSalvesta" layoutX="777.0" layoutY="14.0" mnemonicParsing="false" onAction="#muudaTootaja" prefHeight="25.0" prefWidth="100.0" text="Salvesta" />
                   <Button fx:id="cmdLisaOskus" disable="true" layoutX="646.0" layoutY="146.0" mnemonicParsing="false" onAction="#lisaOskus" text="Lisa Oskus" />

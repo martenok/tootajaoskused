@@ -20,6 +20,7 @@ public class Tootaja {
 		LocalDateTime muutmiseKuup;
 		LocalDateTime lisamiseKuup;
 		LocalDateTime mitteAktiivneKuup;
+		String koolitused;
 		
 		public HashMap<String, Tase> oskused = new HashMap<>();
 		
@@ -32,28 +33,32 @@ public class Tootaja {
 			this.amet=amet;
 			lisamiseKuup = LocalDateTime.now();
 			muutmiseKuup = LocalDateTime.now();
+			this.koolitused = "";
 //			roll = Roll.tava;
 //			aktiivne = true;
 			tootajad.put(id, this);	
-			new Muudatus("** SÜSTEEM **", this.id, String.format("Töötaja id:%s (%s) lisatud", this.id, this.nimi));
 		}
 		
 		
-		static Tootaja uusTootaja(String id, String nimi, String amet){
+		static Tootaja uusTootaja(String id, String nimi, String amet, Tootaja kes){
 			Tootaja x = tootajad.get(id);
-			if (x== null){
+			if (x== null && kes.onAdmin){
+				new Muudatus(kes.id, id, String.format("Lisati töötaja %s (id:%s)", nimi, id));
 				return new Tootaja(id, nimi, amet);
 			}
 			else {
-				//TODO Veateade tootaja olemas
+				new Muudatus(kes.id, x.id, String.format("Püüti lisada töötajat %s (id:%s)", x.nimi, x.id));
 				return x;		
 			}
 		}
 		
-		static Tootaja uusTootaja( String id, String nimi){
-			return uusTootaja(id, nimi, "määramata");
+		static Tootaja sysAdmin(String id, String nimi, String amet){
+			return new Tootaja(id, nimi, amet);
 		}
 		
+		static Tootaja uusTootaja( String id, String nimi, Tootaja kes){
+			return uusTootaja(id, nimi, "määramata", kes);
+		}
 		
 		static List<Tootaja> esimesed(int esimesed){
 			if (esimesed > tootajad.size()) esimesed = tootajad.size();
@@ -98,12 +103,11 @@ public class Tootaja {
 		}
 	
 		
-		
-		public Tootaja lisaOskus (Oskus oskus, Tase tase, Boolean muudatus){
-		    if (oskus != null) {
-                this.oskused.put(oskus.id, tase);
+		public Tootaja lisaOskus (Oskus oskus, Tase tase, Boolean muudatus, Tootaja kes){
+		    if (oskus != null && (kes.onAdmin || kes.id.equals(this.id))) {
+               this.oskused.put(oskus.id, tase);
                if (muudatus) this.muutmiseKuup = LocalDateTime.now();
-                    new Muudatus(this.id, this.id, String.format("Töötajale id:%s (%s) lisatud oskus %s", this.id, this.nimi, oskus.nimetus));
+                    new Muudatus(kes.id, this.id, String.format("Töötajale %s (id:%s) lisatud oskus %s", this.nimi, this.id, oskus.nimetus));
                    //TODO Muudatus oskus lisatud
              } 
 		    else {
@@ -117,7 +121,7 @@ public class Tootaja {
 			if (kes.onAdmin && !kes.id.equals(this.id)){
 				this.onAdmin = admin;
 				this.muutmiseKuup = LocalDateTime.now();
-				new Muudatus(kes.id, this.id, String.format("Töötaja id:%s (%s) admin=%s", this.id, this.nimi, this.onAdmin));
+				new Muudatus(kes.id, this.id, String.format("Töötaja %s (id:%s) admin=%s", this.nimi, this.id, this.onAdmin));
 			}
 			return this;
 		}
@@ -129,12 +133,12 @@ public class Tootaja {
 					this.mitteAktiivneKuup = LocalDateTime.now();
 				
 					this.muutmiseKuup = LocalDateTime.now();
-					new Muudatus(kes.id, this.id, String.format("Töötaja id:%s (%s) muudetud mitteaktiivseks", this.id, this.nimi, this.onAdmin));
+					new Muudatus(kes.id, this.id, String.format("Töötaja %s (id:%s) muudetud mitteaktiivseks", this.nimi, this.id, this.onAdmin));
 				}
 				else if (!aktiivne && this.mitteAktiivneKuup != null)
 					this.mitteAktiivneKuup = null;
 					this.muutmiseKuup = LocalDateTime.now();
-					new Muudatus(kes.id, this.id, String.format("Töötaja id:%s (%s) muudetud aktiivseks", this.id, this.nimi, this.onAdmin));				 	
+					new Muudatus(kes.id, this.id, String.format("Töötaja %s (id:%s) muudetud aktiivseks", this.nimi, this.id, this.onAdmin));				 	
 			}
 			return this;
 		}

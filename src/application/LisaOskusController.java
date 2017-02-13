@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -22,6 +23,9 @@ import javafx.stage.Stage;
 
 public class LisaOskusController implements Initializable{
 
+	public MainController mc = null;
+	public TootajaTabel muudetavTootaja;
+	
 	private ObservableList<OskusUI> dataTasemed = FXCollections.observableArrayList();
 	FilteredList<OskusUI> filteredData;
 	
@@ -48,6 +52,8 @@ public class LisaOskusController implements Initializable{
 	
 	@FXML
 	private Button nuppKatkesta;
+	
+
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -100,7 +106,7 @@ public class LisaOskusController implements Initializable{
 			Tootaja kedaMuuta = Tootaja.tootajad.get(txtID.getText());
 			
 			List<Oskus> oskused = Oskus.leiaNimega(cmbOskus.getValue());
-			Oskus o =oskused.get(0);
+			Oskus o = oskused.get(0);
 			String tase = tabelTasemed.getSelectionModel().selectedItemProperty().getValue().getTase().toString();
 			System.out.println(tase);
 			
@@ -112,12 +118,20 @@ public class LisaOskusController implements Initializable{
 				}
 			}
 			
-			kedaMuuta.lisaOskus(o, t, true);
+			kedaMuuta.lisaOskus(o, t, true, Main.praeguneKasutaja);
+			System.out.println(Main.praeguneKasutaja);
+
+			if (this.mc != null) {
+				mc.naitaTootajaDetaile(muudetavTootaja);
+				mc.naitaTootajaLogi(muudetavTootaja);
+			}
 			
 			Stage lava = (Stage)nuppLisaOskus.getScene().getWindow();
+			
 			lava.close();
 		}
 	}
+	
 	
 	public void sulgeKatkesta(ActionEvent event){
 		if (event.getSource() == nuppKatkesta){
