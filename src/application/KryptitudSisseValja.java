@@ -8,9 +8,6 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
-import java.security.AlgorithmParameters;
-import java.security.spec.InvalidParameterSpecException;
-import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,9 +16,7 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class KryptitudSisseValja {
@@ -33,11 +28,7 @@ public class KryptitudSisseValja {
 		Cipher c = null;
 		try {
 			
-		    byte[] keyBytes = PASSWORD.getBytes();  //example
-		    
-//		    final byte[] ivBytes = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 
-//		         0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f }; //example
-		    
+		    byte[] keyBytes = PASSWORD.getBytes(); 	    
 		    final SecretKey key = new SecretKeySpec(keyBytes, "AES");
 		    final IvParameterSpec IV = new IvParameterSpec(SOOL);
 		    c = Cipher.getInstance("AES/CFB8/NoPadding");

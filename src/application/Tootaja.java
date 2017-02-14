@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class Tootaja {
 		
 		static HashMap<String, Tootaja> tootajad = new HashMap<>();
-//		static int esimesed = 2;
 		
 		String nimi;
 		String id;
@@ -20,9 +20,9 @@ public class Tootaja {
 		LocalDateTime muutmiseKuup;
 		LocalDateTime lisamiseKuup;
 		LocalDateTime mitteAktiivneKuup;
-		String koolitused;
 		
 		public HashMap<String, Tase> oskused = new HashMap<>();
+		public TreeSet<String> koolitused = new TreeSet<>();
 		
 		protected Tootaja(){	}
 
@@ -33,9 +33,7 @@ public class Tootaja {
 			this.amet=amet;
 			lisamiseKuup = LocalDateTime.now();
 			muutmiseKuup = LocalDateTime.now();
-			this.koolitused = "";
-//			roll = Roll.tava;
-//			aktiivne = true;
+			
 			tootajad.put(id, this);	
 		}
 		
@@ -102,6 +100,20 @@ public class Tootaja {
 					.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 		}
 	
+		
+		public Tootaja lisaKoolitus(Koolitus koolitus,  Boolean muudatus, Tootaja kes){
+		    if (koolitus != null && (kes.onAdmin || kes.id.equals(this.id))) {
+	               this.koolitused.add(koolitus.id);
+	               if (muudatus) this.muutmiseKuup = LocalDateTime.now();
+	                    new Muudatus(kes.id, this.id, String.format("Töötajale %s (id:%s) lisatud koolitus/eksam %s", this.nimi, this.id, koolitus.kirjeldus));
+	                   //TODO Muudatus oskus lisatud
+	             } 
+			    else {
+	                    Main.veaKorv("Oskust ei leitud!");
+	            }			
+			return this;
+		}
+		
 		
 		public Tootaja lisaOskus (Oskus oskus, Tase tase, Boolean muudatus, Tootaja kes){
 		    if (oskus != null && (kes.onAdmin || kes.id.equals(this.id))) {

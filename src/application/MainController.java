@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -20,10 +22,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -33,12 +37,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 
 public class MainController implements Initializable {
 
 	private ObservableList<TootajaTabel> dataTootajad = FXCollections.observableArrayList();
 	private ObservableList<TootajaTabel> kasutajad = FXCollections.observableArrayList();
 	private ObservableList<OskusUI> dataOskused = FXCollections.observableArrayList();
+	private ObservableList<KoolitusUI> dataKoolitused = FXCollections.observableArrayList();
 	
 //	private HashMap<String, Tootaja> kasutajad;
 	
@@ -49,7 +55,8 @@ public class MainController implements Initializable {
 //	TootajaTabel nahtavTootaja;
 	
 	FilteredList<TootajaTabel> filteredData;
-    
+	FilteredList<KoolitusUI> filteredKoolitus;
+	
 	@FXML
     private Menu mnuSeadistamine;
 	
@@ -155,6 +162,18 @@ public class MainController implements Initializable {
     @FXML
     private Button btnSulgeLogi;
     
+    @FXML
+    private TableView<KoolitusUI> tblKoolitused;
+
+    @FXML
+    private TableColumn<KoolitusUI, String> veerKoolitus;
+
+    @FXML
+    private TableColumn<KoolitusUI, Boolean> veergFail;
+    
+//    @FXML
+//    private Hyperlink hlinkProov;
+    
 //	public MainController () {
 //		
 //		Tootaja.esimesed(Tootaja.tootajad.size()).stream().map( p -> new TootajaTabel(p.nimi , p.id, p.lisamiseKuup, p.mitteAktiivneKuup))
@@ -195,7 +214,7 @@ public class MainController implements Initializable {
 //	 System.out.println(Main.praeguneKasutaja.id);
 	 
 	 for (TootajaTabel i : kasutajad){
-	  System.out.println(i.getID());
+
 		  if (i.getID().equals(Main.praeguneKasutaja.id)) {
 			  
 			  cmbKasutaja.setValue(i);
@@ -213,8 +232,6 @@ public class MainController implements Initializable {
 
 	lstOskused.setItems(dataOskused);
 	
-
-    
 	lstOskused.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
         filteredData.setPredicate(person -> {
         	OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
@@ -223,6 +240,34 @@ public class MainController implements Initializable {
        	 return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), cmbFilterStaatus.getValue(), o);     	
        });
 	});	
+	
+	
+	veergFail.setSortable(false);
+	
+	veergFail.setCellValueFactory(
+            new Callback<TableColumn.CellDataFeatures<KoolitusUI, Boolean>, 
+            ObservableValue<Boolean>>() {
+        @Override
+        public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<KoolitusUI, Boolean> p) {
+            return new SimpleBooleanProperty(p.getValue() != null);
+        }
+    });
+	
+	// määrame CellFactory
+	veergFail.setCellFactory(
+            new Callback<TableColumn<KoolitusUI, Boolean>, TableCell<KoolitusUI, Boolean>>() {
+        @Override
+        public TableCell<KoolitusUI, Boolean> call(TableColumn<KoolitusUI, Boolean> p) {
+            return new ButtonCell();
+        }
+    
+    });
+	
+	veerKoolitus.setEditable(true);
+	
+	veerKoolitus.setCellValueFactory(cellData -> cellData.getValue().kirjeldus);
+//	veergFail.setCellValueFactory(cellData -> cellData.getValue().fail);
+	annaKoolitused();
 	
     cmbKasutaja.valueProperty().addListener((observable, oldValue, newValue) -> {
     	Boolean onAdmin = Tootaja.tootajad.get(newValue.getID()).onAdmin;
@@ -511,7 +556,8 @@ public class MainController implements Initializable {
 		if (tootaja != null) {
 		        // Täida väljad töötaja andmetega
 			muudetavTootaja = tootaja;
-			 Main.nahtavTootaja = tootaja;
+			Main.nahtavTootaja = tootaja;
+			
 			Tootaja t = Tootaja.tootajad.get(tootaja.getID().toString());
 			
 	        txtNimi.setText(tootaja.getNimi());
@@ -550,6 +596,8 @@ public class MainController implements Initializable {
 	        }
 	        else txtViimatiMuudetud.setText("");
 
+	        annaKoolitused();
+	        
 		} 
 		else {
 			 nulliTootajaDet();
@@ -601,6 +649,31 @@ public class MainController implements Initializable {
 				.sorted((x, y) -> y.millal.compareTo(x.millal))
 				.map(p -> p.toString())
 				.collect(Collectors.joining("\n")));
+	}
+
+	public void annaKoolitused(){
+		System.out.println("annaKoolitused");
+		dataKoolitused.clear();
+		
+		Koolitus.tunnistused.entrySet().stream()
+			.map(Map.Entry::getValue)
+			.filter(p -> p.tootajaID.equals(txtID.getText()))
+			.map(p -> new KoolitusUI(p.id, p.tootajaID, p.kirjeldus, p.fail))
+			.forEach(p -> dataKoolitused.add(p));
+		
+		if (!txtID.getText().equals("")) dataKoolitused.add(new KoolitusUI(null, null, "lisa koolitus", "lisa fail"));
+		
+		this.tblKoolitused.setItems(dataKoolitused);	
+		
+		filteredKoolitus = new FilteredList<>(dataKoolitused, p -> true);
+		// 3. Wrap the FilteredList in a SortedList. 
+	    SortedList<KoolitusUI> sortedKoolitus = new SortedList<>(filteredKoolitus);
+
+	    // 4. Bind the SortedList comparator to the TableView comparator.
+	    sortedKoolitus.comparatorProperty().bind(tblKoolitused.comparatorProperty());
+
+	    // 5. Add sorted (and filtered) data to the table.
+	    this.tblKoolitused.setItems(sortedKoolitus);
 	}
 	
 }

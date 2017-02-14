@@ -114,7 +114,7 @@ public class LoeDemoAndmed {
 		List <String> read = KryptitudSisseValja.loeRead(INIM_OSKUSED);
 		for (String s: read){
 			String tykid[] = s.split(";");
-			System.out.println("---" + s);		
+//			System.out.println("---" + s);		
 			Tootaja.tootajad.get(tykid[0]).lisaOskus(Oskus.oskused.get(tykid[1]), Tase.valueOf(tykid[2]), false, Main.praeguneKasutaja);			
 		}	
 	}

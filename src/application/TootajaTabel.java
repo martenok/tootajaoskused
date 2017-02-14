@@ -13,8 +13,7 @@ public class TootajaTabel {
 	SimpleStringProperty lisamiseKuup;
 	SimpleStringProperty mitteAktiivneKuup;
 	SimpleStringProperty muutmiseKuup;
-	
-	
+		
 	DateTimeFormatter kuupaevaFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 	
 	TootajaTabel(String nimi, String ID, String amet, LocalDateTime lisamiseKuup, LocalDateTime mitteAktiivneKuup, LocalDateTime muutmiseKuup) {
@@ -23,8 +22,7 @@ public class TootajaTabel {
 		this.amet = new SimpleStringProperty(amet);
 		this.lisamiseKuup = new SimpleStringProperty(kuupaevaFormatter.format(lisamiseKuup));
 		this.mitteAktiivneKuup = new SimpleStringProperty( (mitteAktiivneKuup != null) ? kuupaevaFormatter.format(mitteAktiivneKuup): "");
-		this.muutmiseKuup = new SimpleStringProperty( (muutmiseKuup != null) ? kuupaevaFormatter.format(muutmiseKuup): "");
-		
+		this.muutmiseKuup = new SimpleStringProperty( (muutmiseKuup != null) ? kuupaevaFormatter.format(muutmiseKuup): "");	
 	}
 	
     public String getNimi() {

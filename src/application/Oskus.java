@@ -61,7 +61,7 @@ public class Oskus {
 				i = t.ordinal();
 				if (!tasemed.get(i).trim().isEmpty()) this.tasemed.put(t,tasemed.get(i).trim());
 				
-				System.out.println(this.nimetus + "---" + t + "---"+ tasemed.get(i).trim());	
+//				System.out.println(this.nimetus + "---" + t + "---"+ tasemed.get(i).trim());	
 			}
 			
 			this.tasemed.put(Tase.Määramata,"Taset pole määratud");

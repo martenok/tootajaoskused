@@ -14,7 +14,7 @@ public class Main extends Application{
 	static List<String> vead = new ArrayList<>();
 	static TootajaTabel nahtavTootaja;
 	static Tootaja praeguneKasutaja;
-	BorderPane r;
+//	BorderPane r;
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -56,32 +56,32 @@ public class Main extends Application{
 		LoeDemoAndmed.loeInimOskused();	
 
 		
-		for (String x: Tootaja.tootajad.keySet()){
-			
-			System.out.println(Tootaja.tootajad.get(x));
-		}
-		
-		
-		for (String x: Oskus.oskused.keySet()){
-			System.out.println(Oskus.oskused.get(x));
+//		for (String x: Tootaja.tootajad.keySet()){
+//			
+//			System.out.println(Tootaja.tootajad.get(x));
+//		}
+//		
+//		
+//		for (String x: Oskus.oskused.keySet()){
+//			System.out.println(Oskus.oskused.get(x));
+////			System.out.println(x);
+//		}
+//			
+//		for (Muudatus x: Muudatus.muutused){
 //			System.out.println(x);
-		}
-			
-		for (Muudatus x: Muudatus.muutused){
-			System.out.println(x);
-			//System.out.println(x);
-		}
-		
-
-		for (Tootaja x: Tootaja.esimesed(3)){
-			System.out.println(x.nimi + "----" + x.muutmiseKuup);
-			
-		}
-		
-		for (Tootaja x: Tootaja.leiaNimega("i")){
-			System.out.println(x.nimi + "****" + x.muutmiseKuup);
-			
-		}
+//			//System.out.println(x);
+//		}
+//		
+//
+//		for (Tootaja x: Tootaja.esimesed(3)){
+//			System.out.println(x.nimi + "----" + x.muutmiseKuup);
+//			
+//		}
+//		
+//		for (Tootaja x: Tootaja.leiaNimega("i")){
+//			System.out.println(x.nimi + "****" + x.muutmiseKuup);
+//			
+//		}
 		
 		
 		launch(args);
