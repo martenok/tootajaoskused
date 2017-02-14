@@ -7,12 +7,14 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class Main extends Application{
 	static List<String> vead = new ArrayList<>();
 	static TootajaTabel nahtavTootaja;
 	static Tootaja praeguneKasutaja;
+	BorderPane r;
 	
 	@Override
 	public void start(Stage primaryStage) {

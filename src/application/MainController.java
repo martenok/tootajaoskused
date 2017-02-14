@@ -173,7 +173,7 @@ public class MainController implements Initializable {
 		.limit(10)
 		.map(Map.Entry::getValue)
 	 	.map(  p -> new TootajaTabel(p.nimi , p.id, p.amet, p.lisamiseKuup, p.mitteAktiivneKuup, p.muutmiseKuup))
-		.collect(Collectors.toList()).forEach(p -> dataTootajad.add(p));
+		.forEach(p -> dataTootajad.add(p));
 	
 	filteredData = new FilteredList<>(dataTootajad, p -> true);
 	// 3. Wrap the FilteredList in a SortedList. 
@@ -191,7 +191,8 @@ public class MainController implements Initializable {
 			 	.collect(Collectors.toList()).forEach(p -> kasutajad.add(p));
 	 
 	 cmbKasutaja.getItems().addAll(kasutajad);
-	 System.out.println(Main.praeguneKasutaja.id);
+	 
+//	 System.out.println(Main.praeguneKasutaja.id);
 	 
 	 for (TootajaTabel i : kasutajad){
 	  System.out.println(i.getID());
@@ -286,7 +287,6 @@ public class MainController implements Initializable {
     });
     
 	
-	
 	cmbFilterStaatus.valueProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
 			OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
@@ -331,7 +331,6 @@ public class MainController implements Initializable {
 
 	public void nimeFilter(ActionEvent e) {
 		koikTootajad();
-
 	}
 	
 	private void koikTootajad(){
@@ -380,7 +379,6 @@ public class MainController implements Initializable {
 			t.amet = txtAmet.getText();
 			tootaja.setAmet(t.amet);
 			
-			t.koolitused = txtKoolitused.getText();
 			
 			t.muudaAdmin(Main.praeguneKasutaja, chkAdmin.isSelected());
 			
@@ -511,55 +509,53 @@ public class MainController implements Initializable {
 	void naitaTootajaDetaile (TootajaTabel tootaja){
 				
 		if (tootaja != null) {
-		        // Fill the labels with info from the person object.
-		        txtNimi.setText(tootaja.getNimi());
-		        txtID.setText(tootaja.getID());
-		        txtAmet.setText(tootaja.getAmet());
-		        
-		        muudetavTootaja = tootaja;
-		        
-		        Tootaja t = Tootaja.tootajad.get(tootaja.getID());
-		       
-		        if (t.koolitused != null) txtKoolitused.setText(t.koolitused);
-		       
-		        chkAdmin.setSelected(Tootaja.tootajad.get(tootaja.getID().toString()).onAdmin);
-		       	        
-		        if (tootaja.mitteAktiivneKuup.getValue().equals("")){
-		        	cmbStaatus.setValue("Aktiivne");
-		        }
-		        	else {
-		        		cmbStaatus.setValue("Mitte aktiivne");
-		        	}
-		        		        
-		        ObservableList<OskusUI> dataO = FXCollections.observableArrayList();
-		        
-		        Tootaja.tootajad.get(tootaja.getID().toString()).oskused.entrySet().stream()
-		        		.map(p -> new OskusUI(p.getKey(),
-						        				Oskus.oskused.get(p.getKey()).nimetus, 
-						        				p.getValue(), 
-						        				Oskus.oskused.get(p.getKey()).tasemed.get(p.getValue())))
-		        		.collect(Collectors.toList()).forEach(p -> dataO.add(p));
-        
-		        cmdLisaOskus.setDisable(false);
-		         
-		        this.oskusTabel.setItems(dataO);
-		        Main.nahtavTootaja = tootaja;
-		        
-		        if (t.lisamiseKuup != null) {
-		        	txtLisamiseAeg.setText((tootaja.getLisamiseKuup().toString()));
-		        }
-		        if (t.muutmiseKuup != null) {
-		        	txtViimatiMuudetud.setText(tootaja.kuupaevaFormatter.format(t.muutmiseKuup));
-		        }
-		        else txtViimatiMuudetud.setText("");
+		        // Täida väljad töötaja andmetega
+			muudetavTootaja = tootaja;
+			 Main.nahtavTootaja = tootaja;
+			Tootaja t = Tootaja.tootajad.get(tootaja.getID().toString());
+			
+	        txtNimi.setText(tootaja.getNimi());
+	        txtID.setText(tootaja.getID());
+	        txtAmet.setText(tootaja.getAmet());
+  
+       
+	        chkAdmin.setSelected(Tootaja.tootajad.get(tootaja.getID().toString()).onAdmin);
+	       	        
+	        if (tootaja.mitteAktiivneKuup.getValue().equals("")){
+	        	cmbStaatus.setValue("Aktiivne");
+	        }
+	        else {
+	        	cmbStaatus.setValue("Mitte aktiivne");
+	        }
+	        		        
+	        ObservableList<OskusUI> dataO = FXCollections.observableArrayList();
+	        
+	        t.oskused.entrySet().stream()
+	        		.map(p -> new OskusUI(p.getKey(),
+					        				Oskus.oskused.get(p.getKey()).nimetus, 
+					        				p.getValue(), 
+					        				Oskus.oskused.get(p.getKey()).tasemed.get(p.getValue())))
+	        		.forEach(p -> dataO.add(p));
+    
+	        cmdLisaOskus.setDisable(false);
+	         
+	        this.oskusTabel.setItems(dataO);
+	       
+	        
+	        if (t.lisamiseKuup != null) {
+	        	txtLisamiseAeg.setText((tootaja.getLisamiseKuup().toString()));
+	        }
+	        if (t.muutmiseKuup != null) {
+	        	txtViimatiMuudetud.setText(tootaja.kuupaevaFormatter.format(t.muutmiseKuup));
+	        }
+	        else txtViimatiMuudetud.setText("");
 
-		    } 
-		 else {
-		        
+		} 
+		else {
 			 nulliTootajaDet();
-		    }
-		
+		}
 	}
+	
 	
 	void nulliTootajaDet(){
 		
@@ -587,10 +583,10 @@ public class MainController implements Initializable {
 	public void naitaAdminLogi(ActionEvent e){
 		adminNupud(false);
 		btnSulgeLogi.setVisible(true);
-//		if (muudetavTootaja == null) {
+		if (showTable.getSelectionModel().getSelectedItem() == null) {
 			naitaTootajaLogi(cmbKasutaja.getSelectionModel().getSelectedItem());
-//		}
-//		else naitaTootajaLogi(muudetavTootaja);
+		}
+		else naitaTootajaLogi(showTable.getSelectionModel().getSelectedItem());
 	}
 	
 	public void sulgeAdminLogi(ActionEvent e){

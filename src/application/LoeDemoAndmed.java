@@ -1,30 +1,35 @@
 package application;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+
 import java.io.FileReader;
 import java.io.FileWriter;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
 public class LoeDemoAndmed {
 	
-	static String tootajadFail = "tootajad.txt";
-	static String oskusedFail = "oskused.txt";
+	static final String TOOTAJAD_FAIL = "tootajad.txt";
+	static String OSKUSED_FAIL = "oskused.txt";
 	
-	static String inimOskused = "inim_oskused.txt";
+	static String INIM_OSKUSED = "inim_oskused.txt";
 	
-	static String tootFailSalv = "tootajad.txt";
-	static String oskFailSalv = "oskused.txt";
+//	static String tootFailSalv = "tootajad.txt";
+//	static String oskFailSalv = "oskused.txt";
 	
 //Loe töötajad
 	LoeDemoAndmed() {}
 	
 	
 	static void LoeTootajad(){
-		List <String> read = LoeRead(tootajadFail);
+//		List <String> read = LoeRead(TOOTAJAD_FAIL);
+		List <String> read = KryptitudSisseValja.loeRead(TOOTAJAD_FAIL);
 		for (String s: read){
 			String tykid[] = s.split(";");
 			Tootaja t = Tootaja.uusTootaja(tykid[0], tykid[1], Main.praeguneKasutaja);
@@ -58,12 +63,14 @@ public class LoeDemoAndmed {
 					));
 		}
 	
-		SalvestaRead(tootFailSalv, read);
+		KryptitudSisseValja.salvestaRead(TOOTAJAD_FAIL, read);
+//		SalvestaRead(TOOTAJAD_FAIL, read);
 	}	
 	
 	
 	static void loeOskused(){
-		List <String> read = LoeRead(oskusedFail);
+//		List <String> read = LoeRead(OSKUSED_FAIL);
+		List <String> read = KryptitudSisseValja.loeRead(OSKUSED_FAIL);
 		
 		for (String s: read){
 			
@@ -96,14 +103,15 @@ public class LoeDemoAndmed {
 			read.add(s);
 		}
 		
-		SalvestaRead(oskFailSalv, read);
+		KryptitudSisseValja.salvestaRead(OSKUSED_FAIL, read);
+//		SalvestaRead(OSKUSED_FAIL, read);
 	}
 	
 	
 	
 	static void loeInimOskused(){
-		List <String> read = LoeRead(inimOskused);
-		
+//		List <String> read = LoeRead(INIM_OSKUSED);
+		List <String> read = KryptitudSisseValja.loeRead(INIM_OSKUSED);
 		for (String s: read){
 			String tykid[] = s.split(";");
 			System.out.println("---" + s);		
@@ -127,7 +135,8 @@ public class LoeDemoAndmed {
 				}
 			}
 		}
-		SalvestaRead(inimOskused, read);
+		KryptitudSisseValja.salvestaRead(INIM_OSKUSED, read);
+//		SalvestaRead(INIM_OSKUSED, read);
 	}
 	
 	
@@ -147,7 +156,7 @@ public class LoeDemoAndmed {
 			br.close();
 			
 			}
-			catch (Exception ex) {}
+			catch (Exception ex) {System.out.println(ex.getMessage());}
 		
 		return read;
 	}
@@ -164,4 +173,7 @@ public class LoeDemoAndmed {
 		}		
 		catch (Exception ex) {}		
 	}
+	
+	
+	
 }

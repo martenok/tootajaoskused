@@ -1,0 +1,14 @@
+O4;Prantsuse keel;Suhtlemine prantslastega;** SÜSTEEM **;Taset pole määratud;Oskab öelda tere;Oskab öelda nime;Suudab vestelda kohvikus;Väljendab ennast vabalt
+O5;Java;Arvuti piinamine;** SÜSTEEM **;Taset pole määratud;Jooksutab arvuti kokku;Oskab midagi teha
+O6;Kala püüdmine;Kalad toiduks;38201020255;Taset pole määratud
+O7;Saksa keel;Saksa keeles suhtlemine ja kirjutamine;38201020255;Taset pole määratud;oskab öelda tere ja nime;suudab kohvikus vestelda;räägib vabalt;räägib ja kirjutab
+O8;Raamatupidamine;Raamatupidamine;38201020255;Taset pole määratud;Arvete sisestamine;Palga arvestus;Bilansivõimeline
+O9;Test 2;kk;38201020255;Taset pole määratud;Nõrk;Keskmine
+O11;Test5;Ohooo;38201020255;Taset pole määratud;Äge;Vinge
+O10;Suusatamine;Lume peal liikumine;38201020255;Taset pole määratud;Kukub istuli;liigub edasi;klassikaline stiil;uisu stiil
+O13;Uus;väga uus;38201020255;Taset pole määratud;ohoo;ahhaa
+O12;Testime veel;veel üks test;38201020255;Taset pole määratud;nõrk;natuke parem;päris hea
+O14;Kalapüük;Kalasõbra unistus;38201020255;Taset pole määratud;õnge leotamine;ussiga püük;lantimine
+﻿O1;Excel;Exceliga töötamine;** SÜSTEEM **;Taset pole määratud;Oskab numbreid sisestada;Tunneb valemeid;Teab makrosid;VBA
+﻿O3;Inglise keel;Suhtlemine inglastega;** SÜSTEEM **;Taset pole määratud;Oskab öelda tere;Oskab öelda nime;Suudab vestelda kohvikus;Väljendab ennast vabalt
+﻿O2;Leiutamine;Vanast uus;** SÜSTEEM **;Taset pole määratud;Lööb naela põlve;Oskab mudelit teha;Oskab teha töötavat mudelit;Oskab teha kasuliku asja

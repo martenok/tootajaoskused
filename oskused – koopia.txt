@@ -1,5 +1,0 @@
-﻿excel;Exceliga töötamine;Oskab numbreid sisestada;Tunneb valemeid;Teab makrosid;VBA
-leiutamine;Uute asjade välja mõtlemine;Lööb naela põlve;Oskab mudelit teha;Oskab teha töötavat mudelit;Oskab teha kasuliku asja
-inglise keel;Suhtlemine inglastega;Oskab öelda tere;Oskab öelda nime;Suudab vestelda kohvikus;Väljendab ennast vabalt
-prantsuse keel;Suhtlemine prantslastega;Oskab öelda tere;Oskab öelda nime;Suudab vestelda kohvikus;Väljendab ennast vabalt
-java;Arvuti piinamine;Jooksutab arvuti kokku;
