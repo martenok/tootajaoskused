@@ -1,4 +1,6 @@
 package application;
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 //package application;
 import java.net.URL;
@@ -33,6 +35,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -169,7 +172,7 @@ public class MainController implements Initializable {
     private TableColumn<KoolitusUI, String> veerKoolitus;
 
     @FXML
-    private TableColumn<KoolitusUI, Boolean> veergFail;
+    private TableColumn<KoolitusUI, String> veergFail;
     
 //    @FXML
 //    private Hyperlink hlinkProov;
@@ -242,31 +245,41 @@ public class MainController implements Initializable {
 	});	
 	
 	
-	veergFail.setSortable(false);
+//	veergFail.setSortable(false);
+//	
+//	veergFail.setCellValueFactory(
+//            new Callback<TableColumn.CellDataFeatures<KoolitusUI, Boolean>, 
+//            ObservableValue<Boolean>>() {
+//        @Override
+//        public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<KoolitusUI, Boolean> p) {
+//            return new SimpleBooleanProperty(p.getValue() != null);
+//        }
+//    });
+//	
+//	// määrame CellFactory
+//	veergFail.setCellFactory(
+//            new Callback<TableColumn<KoolitusUI, Boolean>, TableCell<KoolitusUI, Boolean>>() {
+//        @Override
+//        public TableCell<KoolitusUI, Boolean> call(TableColumn<KoolitusUI, Boolean> p) {
+//            return new ButtonCell();
+//        }
+//    
+//    });
 	
-	veergFail.setCellValueFactory(
-            new Callback<TableColumn.CellDataFeatures<KoolitusUI, Boolean>, 
-            ObservableValue<Boolean>>() {
-        @Override
-        public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<KoolitusUI, Boolean> p) {
-            return new SimpleBooleanProperty(p.getValue() != null);
-        }
-    });
-	
-	// määrame CellFactory
-	veergFail.setCellFactory(
-            new Callback<TableColumn<KoolitusUI, Boolean>, TableCell<KoolitusUI, Boolean>>() {
-        @Override
-        public TableCell<KoolitusUI, Boolean> call(TableColumn<KoolitusUI, Boolean> p) {
-            return new ButtonCell();
-        }
-    
-    });
-	
-	veerKoolitus.setEditable(true);
+//	veerKoolitus.setEditable(true);
 	
 	veerKoolitus.setCellValueFactory(cellData -> cellData.getValue().kirjeldus);
-//	veergFail.setCellValueFactory(cellData -> cellData.getValue().fail);
+	veergFail.setCellValueFactory(cellData -> cellData.getValue().fail);
+	
+//    cell.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+//        @Override
+//       
+//        }
+//    });
+//    return cell;
+	
+	tblKoolitused.getSelectionModel().setCellSelectionEnabled(true);
+
 	annaKoolitused();
 	
     cmbKasutaja.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -484,7 +497,6 @@ public class MainController implements Initializable {
 	public void lisaOskus(ActionEvent e) throws IOException{
 //		TootajaTabel tootaja = nahtavTootaja;
 		
-		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/LisaOskusAken.fxml"));
 		
 		Parent uusAken = loader.load();
@@ -502,12 +514,11 @@ public class MainController implements Initializable {
        
         dialog.setScene(dialogScene);
         dialog.setTitle("Lisa oskus");
-        
-
-        
+   
         dialog.show();    
 	 }
 
+	
 	public void lisaTootaja(ActionEvent e){
 		System.out.println("Lisan töötajat");
 		nulliTootajaDet();
@@ -661,7 +672,7 @@ public class MainController implements Initializable {
 			.map(p -> new KoolitusUI(p.id, p.tootajaID, p.kirjeldus, p.fail))
 			.forEach(p -> dataKoolitused.add(p));
 		
-		if (!txtID.getText().equals("")) dataKoolitused.add(new KoolitusUI(null, null, "lisa koolitus", "lisa fail"));
+//		if (!txtID.getText().equals("")) dataKoolitused.add(new KoolitusUI(null, null, "lisa koolitus", "lisa fail"));
 		
 		this.tblKoolitused.setItems(dataKoolitused);	
 		
@@ -675,5 +686,68 @@ public class MainController implements Initializable {
 	    // 5. Add sorted (and filtered) data to the table.
 	    this.tblKoolitused.setItems(sortedKoolitus);
 	}
+	
+	public void lisaKoolitus(ActionEvent e) throws IOException{
+//		TootajaTabel tootaja = nahtavTootaja;
+		
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/LisaKoolitus.fxml"));
+		
+		Parent uusAken = loader.load();
+
+		LisaKoolitusController loc = (LisaKoolitusController) loader.getController();
+		
+		loc.mc = this;
+		loc.muudetavTootaja = muudetavTootaja;
+		
+        Stage dialog = new Stage();
+        
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(cmdLisaOskus.getScene().getWindow());
+                
+        Scene dialogScene = new Scene(uusAken, 600, 400);
+       
+        dialog.setScene(dialogScene);
+        dialog.setTitle("Lisa koolitus");
+   
+        dialog.show();    
+	 }
+	
+	public void avaKoolituseFail(ActionEvent e){
+
+		
+	}
+	
+	public boolean editFile(final File file) {
+		  if (!Desktop.isDesktopSupported()) {
+		    return false;
+		  }
+
+		  Desktop desktop = Desktop.getDesktop();
+		  if (!desktop.isSupported(Desktop.Action.EDIT)) {
+		    return false;
+		  }
+
+		  try {
+		    desktop.edit(file);
+		  } catch (IOException e) {
+		    // Log an error
+		    return false;
+		  }
+
+		  return true;
+		}
+	
+	
+	public void dblClick(MouseEvent event) {
+        if (event.getClickCount() > 1) {
+//            System.out.println("double clicked!");
+        	
+//            TableCell c = (TableCell) event.getSource();
+        	String id = tblKoolitused.getSelectionModel().getSelectedItem().getId();
+        	
+            
+            System.out.println("Cell text: " + id);
+        }
+    }
 	
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="222.0" prefWidth="467.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.LisaKoolitusController">
+   <children>
+      <TextArea fx:id="txtKirjeldus" layoutX="19.0" layoutY="37.0" prefHeight="55.0" prefWidth="431.0" />
+      <Label layoutX="19.0" layoutY="14.0" text="Koolituse / eksami kirjeldus" />
+      <Button fx:id="nuppValiFail" layoutX="20.0" layoutY="118.0" mnemonicParsing="false" onAction="#pildiLaadimiseNupp" prefHeight="25.0" prefWidth="87.0" text="Vali fail" />
+      <TextField fx:id="txtFail" editable="false" layoutX="126.0" layoutY="118.0" prefHeight="25.0" prefWidth="320.0" />
+      <Button fx:id="nuppKatkesta" layoutX="143.0" layoutY="176.0" mnemonicParsing="false" onAction="#sulgeKatkesta" text="Katkesta" />
+      <Button fx:id="nuppSalvesta" layoutX="265.0" layoutY="176.0" mnemonicParsing="false" onAction="#sulgeSalvesta" text="Salvesta" />
+      <Label fx:id="lblTootaja" alignment="CENTER_RIGHT" layoutX="221.0" layoutY="14.0" prefHeight="17.0" prefWidth="228.0" text="Isik (ID)" />
+   </children>
+</AnchorPane>

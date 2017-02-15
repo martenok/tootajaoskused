@@ -132,7 +132,7 @@ public class LisaOskusController implements Initializable{
 
 		List<Oskus> oskused = Oskus.leiaNimega(cmbOskus.getValue());
 		
-//		System.out.println("annaTasemed");
+		System.out.println("annaTasemed");
 		
 		dataTasemed.clear();
 
