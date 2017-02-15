@@ -1,4 +1,5 @@
 package application;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public class Tootaja {
 		LocalDateTime mitteAktiivneKuup;
 		
 		public HashMap<String, Tase> oskused = new HashMap<>();
-		public TreeSet<String> koolitused = new TreeSet<>();
+//		public TreeSet<String> koolitused = new TreeSet<>();
 		
 		protected Tootaja(){	}
 
@@ -101,18 +102,18 @@ public class Tootaja {
 		}
 	
 		
-		public Tootaja lisaKoolitus(Koolitus koolitus,  Boolean muudatus, Tootaja kes){
-		    if (koolitus != null && (kes.onAdmin || kes.id.equals(this.id))) {
-	               this.koolitused.add(koolitus.id);
-	               if (muudatus) this.muutmiseKuup = LocalDateTime.now();
-	                    new Muudatus(kes.id, this.id, String.format("Töötajale %s (id:%s) lisatud koolitus/eksam %s", this.nimi, this.id, koolitus.kirjeldus));
-	                   //TODO Muudatus oskus lisatud
-	             } 
-			    else {
-	                    Main.veaKorv("Oskust ei leitud!");
-	            }			
-			return this;
-		}
+//		public Tootaja lisaKoolitus(Koolitus koolitus,  Boolean muudatus, Tootaja kes){
+//		    if (koolitus != null && (kes.onAdmin || kes.id.equals(this.id))) {
+//	               this.koolitused.add(koolitus.id);
+//	               if (muudatus) this.muutmiseKuup = LocalDateTime.now();
+//	                    new Muudatus(kes.id, this.id, String.format("Töötajale %s (id:%s) lisatud koolitus/eksam %s", this.nimi, this.id, koolitus.kirjeldus));
+//	                   //TODO Muudatus oskus lisatud
+//	             } 
+//			    else {
+//	                    Main.veaKorv("Oskust ei leitud!");
+//	            }			
+//			return this;
+//		}
 		
 		
 		public Tootaja lisaOskus (Oskus oskus, Tase tase, Boolean muudatus, Tootaja kes){
@@ -155,7 +156,21 @@ public class Tootaja {
 			return this;
 		}
 		
-		
+		static File annaKaust(TootajaTabel tootaja) {
+			String kaust = Integer.toString(tootaja.getID().hashCode());
+			File dir = new File(kaust);
+			if (dir.exists()) return dir;
+			
+		    try{
+		        dir.mkdir();
+		        return dir;
+		    } 
+		    catch(SecurityException se){
+		        return null;
+		    	//handle it
+		    }
+		    
+		}	
 		
 		public String toString(){
 			return String.format("%s (%s), amet: %s, %s.", nimi, id, amet, lisamiseKuup);

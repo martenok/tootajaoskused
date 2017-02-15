@@ -53,7 +53,12 @@ public class Main extends Application{
 		Tootaja.tootajad.remove("11101010101");
 		
 		LoeDemoAndmed.loeOskused();
-		LoeDemoAndmed.loeInimOskused();	
+		LoeDemoAndmed.loeInimOskused();
+		LoeDemoAndmed.loeKoolitused();
+		
+//		for (Koolitus x : Koolitus.koolitused.values()){
+//			System.out.println(x.kirjeldus);
+//		}
 
 		
 //		for (String x: Tootaja.tootajad.keySet()){
@@ -90,6 +95,8 @@ public class Main extends Application{
 		
 		LoeDemoAndmed.salvestaOskused();
 		LoeDemoAndmed.salvestaInimOskused();
+		
+		LoeDemoAndmed.salvestaKoolitused();
 	}
 
 	

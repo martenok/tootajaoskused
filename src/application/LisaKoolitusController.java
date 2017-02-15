@@ -2,13 +2,16 @@ package application;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,10 +20,12 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 
-public class LisaKoolitusController {
+public class LisaKoolitusController implements Initializable {
 	public MainController mc = null;
 	public TootajaTabel muudetavTootaja;
+	
 	File fail;
 	
     @FXML
@@ -41,6 +46,11 @@ public class LisaKoolitusController {
     @FXML
     private Label lblTootaja;
     
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+	}
+	
     
 	public void pildiLaadimiseNupp(ActionEvent actionEvent) {
 		
@@ -67,10 +77,10 @@ public class LisaKoolitusController {
 		
 		else {
 			
-			if (annaKaust(Main.nahtavTootaja) != null) {
+			if (Tootaja.annaKaust(Main.nahtavTootaja) != null) {
 				
 			    Path source = Paths.get(fail.getAbsolutePath());
-			    Path destination = Paths.get(annaKaust(Main.nahtavTootaja) + "\\" + fail.getName());
+			    Path destination = Paths.get(Tootaja.annaKaust(Main.nahtavTootaja) + "\\" + fail.getName());
 			 
 			    try {
 					Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
@@ -88,21 +98,14 @@ public class LisaKoolitusController {
 			lava.close();
 		}
 		
+		if (this.mc != null) {
+			mc.naitaTootajaDetaile(muudetavTootaja);
+			mc.naitaTootajaLogi(muudetavTootaja);
+		}
+		
 	}
 	
-	public File annaKaust(TootajaTabel tootaja) {
-		String kaust = Integer.toString(tootaja.getID().hashCode());
-		File dir = new File(kaust);
-		if (dir.exists()) return dir;
-		
-	    try{
-	        dir.mkdir();
-	        return dir;
-	    } 
-	    catch(SecurityException se){
-	        return null;
-	    	//handle it
-	    }
-	    
+	public void onShowing(WindowEvent e){
+		lblTootaja.setText(String.format("%s (%s)", muudetavTootaja.getNimi(), muudetavTootaja.getID()));
 	}
 }

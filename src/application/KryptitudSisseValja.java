@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -42,7 +43,7 @@ public class KryptitudSisseValja {
 	public static void salvestaRead(String filename, List<String> read) {
 		
 		Cipher c = initCipher(Cipher.ENCRYPT_MODE);
-		
+	
 		if (c != null) {
 	    
 			try (
@@ -89,8 +90,6 @@ public class KryptitudSisseValja {
 
 	
 	public static void encryptObjectStream(String filename) {
-		
-		
 		Cipher c = initCipher(Cipher.ENCRYPT_MODE);
 		
 		if (c != null) {
@@ -101,8 +100,7 @@ public class KryptitudSisseValja {
 							new FileOutputStream(filename), c))) 	
 			{
 
-				String[] nimed = {"Henn", "Ants", "Peeter"};
-				w.writeObject(nimed);
+				w.writeObject(Koolitus.koolitused);
 				
 			} catch(Exception ex) { ex.printStackTrace();}
 		}
@@ -120,10 +118,15 @@ public class KryptitudSisseValja {
 							new FileInputStream(filename), c))) 	
 			{
 				
-				String[] nimed = (String[]) r.readObject();
-				System.out.println(Arrays.deepToString(nimed));
+				Koolitus.koolitused = (Map<String, Koolitus>) r.readObject();
+//				String[] nimed = (String[]) r.readObject();
+				
+//				System.out.println(Arrays.deepToString(nimed));
 
-			} catch(Exception ex) { ex.printStackTrace();}
+			} catch(Exception ex) { 
+				ex.printStackTrace();
+
+			}
 		}
 		
 	}

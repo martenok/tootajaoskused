@@ -1,10 +1,11 @@
 package application;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Koolitus {
+public class Koolitus implements Serializable{
 
-	static Map<String, Koolitus> tunnistused = new HashMap<String, Koolitus>();
+	static Map<String, Koolitus> koolitused = new HashMap<String, Koolitus>();
 	
 	String id;
 	String tootajaID;
@@ -18,8 +19,8 @@ public class Koolitus {
 		this.oskusID = oskusID;
 		this.kirjeldus = kirjeldus;
 		this.fail = fail;
-		this.id = "T" + (tunnistused.size() + 1);
-		tunnistused.put(this.id, this);
+		this.id = "T" + (koolitused.size() + 1);
+		koolitused.put(this.id, this);
 	}
 	
 	

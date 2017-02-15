@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 //package application;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -16,6 +18,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -174,6 +177,9 @@ public class MainController implements Initializable {
     @FXML
     private TableColumn<KoolitusUI, String> veergFail;
     
+    @FXML
+    private Label lblOskusteFilter;
+    
 //    @FXML
 //    private Hyperlink hlinkProov;
     
@@ -226,14 +232,10 @@ public class MainController implements Initializable {
 		  }
 	 }
 	 
-	 Oskus.oskused.entrySet().stream()
-	 	.sorted((x, y) -> x.getValue().nimetus.compareTo(y.getValue().nimetus))
-	 	.map(Map.Entry::getValue)
-	 	.map(  p -> new OskusUI(p.id , p.nimetus, p.kirjeldus))
-	 	.collect(Collectors.toList()).forEach(p -> dataOskused.add(p));
-	}
 
-	lstOskused.setItems(dataOskused);
+	}
+	
+	teeOskusteList();
 	
 	lstOskused.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
         filteredData.setPredicate(person -> {
@@ -245,40 +247,28 @@ public class MainController implements Initializable {
 	});	
 	
 	
-//	veergFail.setSortable(false);
-//	
-//	veergFail.setCellValueFactory(
-//            new Callback<TableColumn.CellDataFeatures<KoolitusUI, Boolean>, 
-//            ObservableValue<Boolean>>() {
-//        @Override
-//        public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<KoolitusUI, Boolean> p) {
-//            return new SimpleBooleanProperty(p.getValue() != null);
-//        }
-//    });
-//	
-//	// määrame CellFactory
-//	veergFail.setCellFactory(
-//            new Callback<TableColumn<KoolitusUI, Boolean>, TableCell<KoolitusUI, Boolean>>() {
-//        @Override
-//        public TableCell<KoolitusUI, Boolean> call(TableColumn<KoolitusUI, Boolean> p) {
-//            return new ButtonCell();
-//        }
-//    
-//    });
-	
-//	veerKoolitus.setEditable(true);
 	
 	veerKoolitus.setCellValueFactory(cellData -> cellData.getValue().kirjeldus);
 	veergFail.setCellValueFactory(cellData -> cellData.getValue().fail);
 	
-//    cell.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-//        @Override
-//       
-//        }
-//    });
-//    return cell;
+	tblKoolitused.setOnMousePressed(new EventHandler<MouseEvent>() {
+	    @Override 
+	    public void handle(MouseEvent event) {
+	        if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+	        	String id = tblKoolitused.getSelectionModel().getSelectedItem().getId();
+	        	
+	        	if (Koolitus.koolitused.get(id).fail != null){
+		        	Path failiTee = Paths.get(Tootaja.annaKaust(Main.nahtavTootaja) + "\\" + Koolitus.koolitused.get(id).fail);
+		        	File fail = failiTee.toFile();
+		        	
+		        	editFile(fail);
+	        	}
+//	        	int i = tblKoolitused.getSelectionModel().getFocusedIndex();
+//	            System.out.println("Cell text: " + fail);                   
+	        }
+	    }
+	});
 	
-	tblKoolitused.getSelectionModel().setCellSelectionEnabled(true);
 
 	annaKoolitused();
 	
@@ -348,15 +338,12 @@ public class MainController implements Initializable {
 	cmbFilterStaatus.valueProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
 			OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
-			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), newValue, o);
-			
+			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), newValue, o);	
         });
-		
 	});
-	
-	
 	}
 
+	
 	boolean tootajaFilter(TootajaTabel toot, String uusNimi, String uusID, String uusAmet, String uusAkt, OskusUI oskus){   
 		if ((uusNimi == null || uusNimi.isEmpty() ) 
 			&& (uusID == null || uusID.isEmpty())
@@ -479,8 +466,12 @@ public class MainController implements Initializable {
 	
 	public void lisaOskusSysteemi() throws IOException{
 		
-		Parent uusAken = FXMLLoader.load(getClass().getResource("/application/OskusSysteemi.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/OskusSysteemi.fxml"));
+		Parent uusAken = loader.load();
 
+		OskusSysteemiController loc = (OskusSysteemiController) loader.getController();
+		loc.mc = this;
+		
         Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(cmdLisaOskus.getScene().getWindow());
@@ -489,7 +480,7 @@ public class MainController implements Initializable {
        
         dialog.setScene(dialogScene);
         dialog.setTitle("Lisa oskus");
-        
+               
         dialog.show();
 	}
 	
@@ -541,7 +532,7 @@ public class MainController implements Initializable {
 		chkAdmin.setVisible(nahtavus);
 		showTable.setVisible(nahtavus);
 		mnuSeadistamine.setDisable(!nahtavus);
-		
+		lblOskusteFilter.setVisible(nahtavus);
 		mnuLogi.setDisable(!nahtavus);
 		cmbStaatus.setDisable(!nahtavus);
 		nuppFiltrNimi.setVisible(nahtavus);
@@ -648,11 +639,13 @@ public class MainController implements Initializable {
 		else naitaTootajaLogi(showTable.getSelectionModel().getSelectedItem());
 	}
 	
+	
 	public void sulgeAdminLogi(ActionEvent e){
 		adminNupud(true);
 		btnSulgeLogi.setVisible(false);
 	}
 	
+	//Kogu logi näitamine
 	public void naitaKoguLogi(ActionEvent e){
 		adminNupud(false);
 		btnSulgeLogi.setVisible(true);
@@ -663,10 +656,10 @@ public class MainController implements Initializable {
 	}
 
 	public void annaKoolitused(){
-		System.out.println("annaKoolitused");
+//		System.out.println("annaKoolitused");
 		dataKoolitused.clear();
 		
-		Koolitus.tunnistused.entrySet().stream()
+		Koolitus.koolitused.entrySet().stream()
 			.map(Map.Entry::getValue)
 			.filter(p -> p.tootajaID.equals(txtID.getText()))
 			.map(p -> new KoolitusUI(p.id, p.tootajaID, p.kirjeldus, p.fail))
@@ -704,11 +697,11 @@ public class MainController implements Initializable {
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(cmdLisaOskus.getScene().getWindow());
                 
-        Scene dialogScene = new Scene(uusAken, 600, 400);
+        Scene dialogScene = new Scene(uusAken, 467, 222);
        
         dialog.setScene(dialogScene);
         dialog.setTitle("Lisa koolitus");
-   
+        dialog.setOnShowing(p -> loc.onShowing(p));
         dialog.show();    
 	 }
 	
@@ -717,7 +710,7 @@ public class MainController implements Initializable {
 		
 	}
 	
-	public boolean editFile(final File file) {
+	public boolean editFile(File file) {
 		  if (!Desktop.isDesktopSupported()) {
 		    return false;
 		  }
@@ -728,7 +721,7 @@ public class MainController implements Initializable {
 		  }
 
 		  try {
-		    desktop.edit(file);
+		    desktop.open(file);
 		  } catch (IOException e) {
 		    // Log an error
 		    return false;
@@ -750,4 +743,12 @@ public class MainController implements Initializable {
         }
     }
 	
+	public void teeOskusteList(){
+		 Oskus.oskused.entrySet().stream()
+		 	.sorted((x, y) -> x.getValue().nimetus.compareTo(y.getValue().nimetus))
+		 	.map(Map.Entry::getValue)
+		 	.map(  p -> new OskusUI(p.id , p.nimetus, p.kirjeldus))
+		 	.collect(Collectors.toList()).forEach(p -> dataOskused.add(p));
+		lstOskused.setItems(dataOskused);
+	}
 }

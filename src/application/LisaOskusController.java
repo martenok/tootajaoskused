@@ -78,9 +78,9 @@ public class LisaOskusController implements Initializable{
 	                return true;
 	            }
 	            if (oskus.getNimetus().contains(newValue)) {
-	                return true; // Filter matches first name.
+	                return true; 
 	            }
-	            return false; // Does not match.
+	            return false; 
 	        });
 			
 		});

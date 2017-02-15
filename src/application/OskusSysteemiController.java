@@ -29,9 +29,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class OskusSysteemiController implements Initializable {
-	
+	public MainController mc = null;
 	static private ObservableList<OskusTase> dataOskused = FXCollections.observableArrayList();
 	
 	static String muuda = "";
@@ -113,6 +114,10 @@ public class OskusSysteemiController implements Initializable {
 	public void sulgeKatkesta(ActionEvent event){
 		if (event.getSource() == nuppKatkesta){
 			Stage lava = (Stage)nuppKatkesta.getScene().getWindow();
+			if (this.mc != null) {
+				mc.teeOskusteList();
+			}
+			
 			lava.close();
 		}
 	}
@@ -231,4 +236,5 @@ public class OskusSysteemiController implements Initializable {
     }	
 	
 
+    
 }

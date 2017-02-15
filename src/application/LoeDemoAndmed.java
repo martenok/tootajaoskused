@@ -1,7 +1,7 @@
 package application;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
@@ -19,6 +19,7 @@ public class LoeDemoAndmed {
 	static String OSKUSED_FAIL = "oskused.txt";
 	
 	static String INIM_OSKUSED = "inim_oskused.txt";
+	static String KOOLITUSED = "koolitused.txt";
 	
 //	static String tootFailSalv = "tootajad.txt";
 //	static String oskFailSalv = "oskused.txt";
@@ -139,7 +140,13 @@ public class LoeDemoAndmed {
 //		SalvestaRead(INIM_OSKUSED, read);
 	}
 	
+	static void salvestaKoolitused(){
+		KryptitudSisseValja.encryptObjectStream(KOOLITUSED);
+	}
 	
+	static void loeKoolitused(){
+		KryptitudSisseValja.decryptObjectStream(KOOLITUSED);
+	}
 	
 	public static List<String> LoeRead(String failinimi) {
 		List<String> read= new ArrayList<String>();
@@ -174,6 +181,6 @@ public class LoeDemoAndmed {
 		catch (Exception ex) {}		
 	}
 	
-	
+
 	
 }
