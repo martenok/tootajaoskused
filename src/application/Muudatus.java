@@ -1,15 +1,12 @@
 package application;
-import java.time.LocalDate;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public class Muudatus {
+public class Muudatus implements Serializable{
 	
 	static List<Muudatus> muutused = new ArrayList<Muudatus>();
 	static int loendur = 0;
@@ -34,19 +31,6 @@ public class Muudatus {
 //		}
 	}
 	
-//	Muudatus(String mida, String kirjeldus){
-//		this.id = ++loendur;
-//		
-//		this.mida = mida;
-//		this.kirjeldus = kirjeldus + "** SÜSTEEM **";
-//		this.millal = LocalDateTime.now();
-//		muutused.add(this);
-//		try {
-//		    Thread.sleep(1);
-//		} catch(InterruptedException ex) {
-//		    Thread.currentThread().interrupt();
-//		}
-//	}
 
 	static List<Muudatus> viimasedMuudatused (String ID, int mitu){
 		return muutused.stream()
@@ -62,7 +46,6 @@ public class Muudatus {
 				.collect(Collectors.toList());
 	}
 
-	
 	
 	public String toString(){
 		if (kes != null){

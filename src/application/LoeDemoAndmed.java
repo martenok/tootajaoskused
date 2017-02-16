@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 public class LoeDemoAndmed {
 	
 	static final String TOOTAJAD_FAIL = "tootajad.txt";
+	static final String MUUDATUSED = "logi.txt";
+	
 	static String OSKUSED_FAIL = "oskused.txt";
 	
 	static String INIM_OSKUSED = "inim_oskused.txt";
@@ -138,6 +140,18 @@ public class LoeDemoAndmed {
 		}
 		KryptitudSisseValja.salvestaRead(INIM_OSKUSED, read);
 //		SalvestaRead(INIM_OSKUSED, read);
+	}
+	
+	static void salvestaLogi(){
+
+		KryptitudSisseValja.encryptMuudatus(MUUDATUSED);
+
+	}
+	
+	static void loeLogi(){
+
+		KryptitudSisseValja.decryptMuudatus(MUUDATUSED);
+
 	}
 	
 	static void salvestaKoolitused(){

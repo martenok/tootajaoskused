@@ -130,5 +130,43 @@ public class KryptitudSisseValja {
 		}
 		
 	}
+	
+	
+	public static void encryptMuudatus(String filename) {
+		Cipher c = initCipher(Cipher.ENCRYPT_MODE);
+		
+		if (c != null) {
+
+			try (
+					ObjectOutputStream w = new ObjectOutputStream(
+						new CipherOutputStream(
+							new FileOutputStream(filename), c))) 	
+			{
+
+				w.writeObject(Muudatus.muutused);
+				
+			} catch(Exception ex) { ex.printStackTrace();}
+		}
+	}
+
+	
+	public static void decryptMuudatus(String filename) {
+		Cipher c = initCipher(Cipher.DECRYPT_MODE);
+		
+		if (c != null) {
+
+			try (ObjectInputStream r = new ObjectInputStream(
+						new CipherInputStream(
+							new FileInputStream(filename), c))) 	
+			{
+				
+				Muudatus.muutused = (ArrayList<Muudatus>) r.readObject();
+
+			} catch(Exception ex) { 
+				ex.printStackTrace();
+
+			}
+		}
+	}
 
 }
