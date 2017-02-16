@@ -33,9 +33,9 @@ import javafx.stage.WindowEvent;
 
 public class OskusSysteemiController implements Initializable {
 	public MainController mc = null;
-	static private ObservableList<OskusTase> dataOskused = FXCollections.observableArrayList();
+//	static private ObservableList<OskusTase> dataOskused = FXCollections.observableArrayList();
 	
-	static String muuda = "";
+	public String muuda = "";
 	
 	@FXML
 	private TreeTableView<OskusTase> treeTable;
@@ -144,11 +144,11 @@ public class OskusSysteemiController implements Initializable {
 			tasemed.add(txtHea.getText());
 			tasemed.add(txtVHea.getText());
 			
-			System.out.println(o.id);
+//			System.out.println(o.id);
 			
 			o.lisaTasemed(tasemed, Main.praeguneKasutaja.id);
 			
-			System.out.println("Controllerist trükk " + o.id + " tasemed " + o.tasemed);
+//			System.out.println("Controllerist trükk " + o.id + " tasemed " + o.tasemed);
 			
 			TreeItem<OskusTase> juurikas = annaPuu();
 			treeTable.setRoot(juurikas);

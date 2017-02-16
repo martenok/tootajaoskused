@@ -90,11 +90,12 @@
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font></Label>
+                  <Label fx:id="lblLogiPealkiri" layoutX="14.0" layoutY="40.0" prefHeight="17.0" prefWidth="88.0" text="Kasutaja logi" visible="false" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="289.0" prefWidth="708.0">
                <children>
-                  <TableView fx:id="oskusTabel" layoutX="137.0" layoutY="146.0" prefHeight="120.0" prefWidth="501.0">
+                  <TableView fx:id="oskusTabel" disable="true" layoutX="137.0" layoutY="146.0" prefHeight="120.0" prefWidth="501.0">
                     <columns>
                       <TableColumn fx:id="veergOskus" prefWidth="90.0" text="Oskus">
 	                      <cellValueFactory>
@@ -126,13 +127,13 @@
                   <Label layoutX="373.0" layoutY="54.0" text="Staatus" />
                   <Label layoutX="378.0" layoutY="15.0" text="Amet" />
                   <Button fx:id="cmdSalvesta" layoutX="777.0" layoutY="14.0" mnemonicParsing="false" onAction="#muudaTootaja" prefHeight="25.0" prefWidth="100.0" text="Salvesta" />
-                  <Button fx:id="cmdLisaOskus" alignment="TOP_LEFT" contentDisplay="CENTER" disable="true" layoutX="656.0" layoutY="151.0" mnemonicParsing="false" onAction="#lisaOskus" text="Lisa Oskus" />
+                  <Button fx:id="cmdLisaOskus" alignment="TOP_LEFT" contentDisplay="CENTER" disable="true" layoutX="656.0" layoutY="147.0" mnemonicParsing="false" onAction="#lisaOskus" text="Lisa Oskus" />
                   <TextField fx:id="txtLisamiseAeg" editable="false" layoutX="140.0" layoutY="96.0" />
                   <TextField fx:id="txtViimatiMuudetud" editable="false" layoutX="428.0" layoutY="94.0" />
                   <Label layoutX="316.0" layoutY="99.0" text="Viimati muudetud" />
                   <Button fx:id="cmdKatkesta" disable="true" layoutX="777.0" layoutY="51.0" mnemonicParsing="false" onAction="#katkestaLisaTootaja" prefHeight="25.0" prefWidth="100.0" text="Katkesta" visible="false" />
-                  <Button layoutX="656.0" layoutY="288.0" mnemonicParsing="false" onAction="#lisaKoolitus" text="Lisa koolitus / eksam" />
-                  <TableView fx:id="tblKoolitused" layoutX="137.0" layoutY="292.0" prefHeight="120.0" prefWidth="501.0">
+                  <Button fx:id="nuppKoolitus" disable="true" layoutX="656.0" layoutY="292.0" mnemonicParsing="false" onAction="#lisaKoolitus" text="Lisa koolitus / eksam" />
+                  <TableView fx:id="tblKoolitused" disable="true" layoutX="137.0" layoutY="292.0" prefHeight="120.0" prefWidth="501.0">
                     <columns>
                       <TableColumn fx:id="veerKoolitus" prefWidth="343.0" text="Koolitus / eksam" />
                         <TableColumn fx:id="veergFail" prefWidth="156.0" text="Fail" />

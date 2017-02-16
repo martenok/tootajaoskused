@@ -12,19 +12,24 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+
+
+/**
+ * Koolituste ja eksamite lisamise akna kontroller
+ *
+ */
 
 public class LisaKoolitusController implements Initializable {
 	public MainController mc = null;
 	public TootajaTabel muudetavTootaja;
+	public String koolitusID;
 	
 	File fail;
 	
@@ -61,6 +66,7 @@ public class LisaKoolitusController implements Initializable {
 		fail = fileChooser.showOpenDialog(null);
 		
 		if (fail != null) txtFail.setText(fail.getName());
+		else txtFail.setText("");
 
 	}
 	
@@ -71,13 +77,25 @@ public class LisaKoolitusController implements Initializable {
 		}
 	}
 	
+	
 	public void sulgeSalvesta(ActionEvent event){	
+		
 		Tootaja tootaja = Tootaja.tootajad.get(Main.nahtavTootaja.ID.getValue());
-		if (txtFail.getText().equals("")) Koolitus.lisaTunnistus(tootaja.id, txtKirjeldus.getText());
+
+		if (fail == null){
+			if (koolitusID.equals("")){
+				Koolitus.lisaTunnistus(tootaja.id, txtKirjeldus.getText());
+			}
+			else {
+				Koolitus.koolitused.get(koolitusID).kirjeldus = txtKirjeldus.getText();
+				Koolitus.koolitused.get(koolitusID).fail = "";
+			}
+		}
 		
 		else {
 			
 			if (Tootaja.annaKaust(Main.nahtavTootaja) != null) {
+				System.out.println(fail);
 				
 			    Path source = Paths.get(fail.getAbsolutePath());
 			    Path destination = Paths.get(Tootaja.annaKaust(Main.nahtavTootaja) + "\\" + fail.getName());
@@ -89,23 +107,39 @@ public class LisaKoolitusController implements Initializable {
 					e.printStackTrace();
 				}
 				
-				Koolitus.lisaTunnistus(tootaja.id, null, txtKirjeldus.getText(), fail.getName());
+				
+				
+				if (koolitusID.equals("")){
+					Koolitus.lisaTunnistus(tootaja.id, null, txtKirjeldus.getText(), fail.getName());
+				}
+				else {
+					Koolitus.koolitused.get(koolitusID).kirjeldus = txtKirjeldus.getText();
+					Koolitus.koolitused.get(koolitusID).fail = fail.getName();
+				}
+				
 			}
 		}
 		
-		if (event.getSource() == nuppSalvesta){
-			Stage lava = (Stage)nuppSalvesta.getScene().getWindow();
-			lava.close();
-		}
-		
+
+			
+	
 		if (this.mc != null) {
 			mc.naitaTootajaDetaile(muudetavTootaja);
 			mc.naitaTootajaLogi(muudetavTootaja);
 		}
 		
+		if (event.getSource() == nuppSalvesta){
+			Stage lava = (Stage)nuppSalvesta.getScene().getWindow();
+			lava.close();
+		}		
 	}
 	
 	public void onShowing(WindowEvent e){
 		lblTootaja.setText(String.format("%s (%s)", muudetavTootaja.getNimi(), muudetavTootaja.getID()));
+		if (!koolitusID.equals("")) {
+			txtKirjeldus.setText(Koolitus.koolitused.get(koolitusID).kirjeldus);
+			if (Koolitus.koolitused.get(koolitusID).fail != null) txtFail.setText(Koolitus.koolitused.get(koolitusID).fail);
+		}
+
 	}
 }
