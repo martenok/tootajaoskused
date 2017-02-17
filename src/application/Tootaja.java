@@ -156,6 +156,22 @@ public class Tootaja {
 			return this;
 		}
 		
+		Tootaja muudaNimi(Tootaja kes, String nimi){
+			if (nimi != null && (kes.onAdmin || kes.id.equals(this.id))) {
+				new Muudatus(kes.id, this.id, String.format("Töötaja %s (id:%s) nimi muudetud %s", this.nimi, this.id, nimi));				
+				this.nimi = nimi;
+			}
+			return this;
+		}
+		
+		Tootaja muudaAmet(Tootaja kes, String amet){
+			if (amet != null && (kes.onAdmin || kes.id.equals(this.id))) {
+				new Muudatus(kes.id, this.id, String.format("Töötaja %s (id:%s) amet muudetud %s", this.nimi, this.id, amet));
+				this.amet = amet;		
+			}
+			return this;
+		}
+		
 		static File annaKaust(TootajaTabel tootaja) {
 			String kaust = Integer.toString(tootaja.getID().hashCode());
 			File dir = new File(kaust);

@@ -43,7 +43,7 @@ public class Main extends Application{
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		LoeDemoAndmed.loeKoolitused();	
+		LoeDemoAndmed.loeLogi();;	
 		praeguneKasutaja = Tootaja.sysAdmin("11101010101", "***SÜSTEEM***", "Süsteemi administraator");
 		praeguneKasutaja.onAdmin=true;
 		
@@ -57,6 +57,7 @@ public class Main extends Application{
 		LoeDemoAndmed.loeInimOskused();
 		LoeDemoAndmed.loeKoolitused();
 		
+//		System.out.println(Koolitus.koolitused);
 		
 //		for (Koolitus x : Koolitus.koolitused.values()){
 //			System.out.println(x.kirjeldus);

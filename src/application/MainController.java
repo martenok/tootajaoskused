@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -56,6 +54,11 @@ public class MainController implements Initializable {
 	
 	private boolean algus = true;
 	private boolean tootajaMuutmine = true;
+	private boolean nimiMuudetud;
+	private boolean ametMuudetud;
+	private boolean staatusMuudetud;
+	private boolean adminMuudetud;
+		
 	private TootajaTabel muudetavTootaja;
 	
 	private boolean koolituseMuutmine = false;
@@ -187,7 +190,7 @@ public class MainController implements Initializable {
 
     @FXML
     private Label lblLogiPealkiri;
-
+    
     
 //    @FXML
 //    private Hyperlink hlinkProov;
@@ -230,13 +233,14 @@ public class MainController implements Initializable {
 	 cmbKasutaja.getItems().addAll(kasutajad);
 	 
 //	 System.out.println(Main.praeguneKasutaja.id);
+	
 	 
+	 /*Alglaadimisel kasuataja comboboxis hetkekasutaja valimine
+	  * 
+	  */
 	 for (TootajaTabel i : kasutajad){
-
-		  if (i.getID().equals(Main.praeguneKasutaja.id)) {
-			  
+		  if (i.getID().equals(Main.praeguneKasutaja.id)) {  
 			  cmbKasutaja.setValue(i);
-			  
 			  break;
 		  }
 	 }
@@ -251,8 +255,14 @@ public class MainController implements Initializable {
             (observable, oldValue, newValue) -> naitaTootajaDetaile(newValue));
 	
 	
+	/*
+	 * Süüsteemis olevate oskuste lisamine Listi dataOskused
+	 */
 	teeOskusteList();
 	
+	/*Kuulaja oskuste listile, et saaks filtreerida töötajaid
+	 * oskuste järgi
+	 */
 	lstOskused.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
         filteredData.setPredicate(person -> {
         	OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
@@ -263,18 +273,25 @@ public class MainController implements Initializable {
 	});	
 	
 	
-	
+	/*Koolituste tabeli andmetehase defineerimine
+	 * 
+	 */
 	veerKoolitus.setCellValueFactory(cellData -> cellData.getValue().kirjeldus);
 	veergFail.setCellValueFactory(cellData -> cellData.getValue().fail);
 	
+	
+	/*Koolituset tabelile topelt-klõpsu funktisoonalsuse lisamine
+	 * Kui teha rea peal topelt-klõps, siis avatakse sellel real kuvatav fail
+	 * vt meetod editFile allpool (töötab windowsi keskkonnas) 
+	 */
 	tblKoolitused.setOnMousePressed(new EventHandler<MouseEvent>() {
 	    @Override 
 	    public void handle(MouseEvent event) {
 	        if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
 	        	String id = tblKoolitused.getSelectionModel().getSelectedItem().getId();
 	        	
-	        	if (Koolitus.koolitused.get(id).fail != null){
-		        	Path failiTee = Paths.get(Tootaja.annaKaust(Main.nahtavTootaja) + "\\" + Koolitus.koolitused.get(id).fail);
+	        	if (Koolitus.koolitused.get(id).annaFail() != null){
+		        	Path failiTee = Paths.get(Tootaja.annaKaust(Main.nahtavTootaja) + "\\" + Koolitus.koolitused.get(id).annaFail());
 		        	File fail = failiTee.toFile();
 		        	
 		        	editFile(fail);
@@ -285,22 +302,26 @@ public class MainController implements Initializable {
 	    }
 	});
 	
+	/*Kuulaja koolituste tabelile
+	 * Kui rida valitud, siis nupu vajutades muudetakse koolitus
+	 * Kui rida ei ole valitud, siis lisatakse koolitus
+	 */
 	tblKoolitused.getSelectionModel().selectedItemProperty().addListener(
-			(observable, oldValue, newValue) -> {
-				if (newValue == null) { 
-//					System.out.println("Lisa koolitus");
-					koolituseMuutmine  = false;
-					nuppKoolitus.setText("Lisa koolitus / eksam");
-				}
-				else { 
-//					System.out.println("Muuda koolitus");
-					koolituseMuutmine  = true;
-					nuppKoolitus.setText("Muuda");
-				}
-					
-			});
+		(observable, oldValue, newValue) -> {
+			if (newValue == null) { 
+//				System.out.println("Lisa koolitus");
+				koolituseMuutmine  = false;
+				nuppKoolitus.setText("Lisa koolitus / eksam");
+			}
+			else { 
+//				System.out.println("Muuda koolitus");
+				koolituseMuutmine  = true;
+				nuppKoolitus.setText("Muuda");
+			}	
+	});
 	
-	annaKoolitused();
+//	annaKoolitused();
+	
 	
     cmbKasutaja.valueProperty().addListener((observable, oldValue, newValue) -> {
     	Boolean onAdmin = Tootaja.tootajad.get(newValue.getID()).onAdmin;
@@ -326,8 +347,10 @@ public class MainController implements Initializable {
 	
 	cmbFilterStaatus.setValue("Aktiivsed");
 	
-
-	
+/*Kuulajad töötajate filtreerimiseks
+ * 
+ */
+	//Filter nime järgi
 	txtFilter.textProperty().addListener((observable, oldValue, newValue) -> {
         filteredData.setPredicate(person -> {
 //        	System.out.println(newValue);
@@ -337,6 +360,7 @@ public class MainController implements Initializable {
         });
     });
 
+	//Filter ameti järgi
 	txtFilterAmet.textProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
 			OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
@@ -345,6 +369,7 @@ public class MainController implements Initializable {
         });
     });
 	
+	//Filter isikukoodi järgi
 	txtFilterID.textProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
 			OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
@@ -363,17 +388,66 @@ public class MainController implements Initializable {
         });
     });
     
-	
+	//Filter staatuse järgi aktiivsed või mitteaktiiivsed või kõik
 	cmbFilterStaatus.valueProperty().addListener((observable, oldValue, newValue) -> {
 		filteredData.setPredicate(person -> {
 			OskusUI o = lstOskused.getSelectionModel().getSelectedItem();
 			return tootajaFilter(person, txtFilter.getText(), txtFilterID.getText(), txtFilterAmet.getText(), newValue, o);	
         });
 	});
-	}
+	
+	
+/*Kuulajad, et teha kindlaks millist töötaja infot on muudetud
+ * 	
+ */
+	//Töötaja nime muutmise kontroll	
+	txtNimi.textProperty().addListener((observable, oldValue, newValue) -> {
+		if (Main.nahtavTootaja != null) {
+			if (newValue != null && Main.nahtavTootaja !=null && Main.nahtavTootaja.getNimi().equals(newValue)) nimiMuudetud = false;
+	//		else if (Main.nahtavTootaja == null)  nimiMuudetud = false;
+			else {
+	//			System.out.println(newValue);
+				nimiMuudetud = true;
+			}
+		}
+    });
+	
+	//Töötaja ameti muutmise kontroll
+	txtAmet.textProperty().addListener((observable, oldValue, newValue) -> {
+		if (Main.nahtavTootaja != null) {
+			if (newValue != null && Main.nahtavTootaja.getAmet().equals(newValue)) ametMuudetud = false;	
+			else{
+	//			System.out.println(newValue);
+				ametMuudetud = true;
+			}
+		}
+    });
+	
+	//Töötaja staatuse muutmise kontroll aktiivne või mitteaktiivne
+	cmbStaatus.valueProperty().addListener((observable, oldValue, newValue) -> {
+//		System.out.println(newValue);
+		if (Main.nahtavTootaja != null) {
+			if (newValue.equals("Aktiivne") && Main.nahtavTootaja.getMitteAktiivneKuup().equals("")
+				|| newValue.equals("Mitte aktiivsed") && !Main.nahtavTootaja.getMitteAktiivneKuup().equals("")) staatusMuudetud = false;
+			else staatusMuudetud = true;
+		}
+	});
+  
+	//Administraatoriks või tavakasutajaks muutmise kontroll
+	chkAdmin.selectedProperty().addListener((observable, oldValue, newValue) ->{
+		if (Main.nahtavTootaja != null) {
+			if (newValue.equals(Tootaja.tootajad.get(Main.nahtavTootaja.getID()))) adminMuudetud = false; 
+			else adminMuudetud = false;
+		}
+	});
+	
+	}//initialize lõpp
 
 	
-	boolean tootajaFilter(TootajaTabel toot, String uusNimi, String uusID, String uusAmet, String uusAkt, OskusUI oskus){   
+/*Filter, mis jälgib kõike töötaja filterdamise välju
+ * 	
+ */
+	boolean tootajaFilter(TootajaTabel toot, String uusNimi, String uusID, String uusAmet, String uusAkt, OskusUI oskus){   	
 		if ((uusNimi == null || uusNimi.isEmpty() ) 
 			&& (uusID == null || uusID.isEmpty())
 			&& (uusAmet == null || uusAmet.isEmpty())
@@ -381,9 +455,9 @@ public class MainController implements Initializable {
 			&& (oskus == null )) {
             return true;
         }
-        if (toot.getID().contains(uusID) 
+		if (toot.getID().contains(uusID) 
         	&& toot.getNimi().contains(uusNimi)
-        	&& toot.getAmet().contains(uusAmet)	
+        	&& toot.getAmet().toLowerCase().contains(uusAmet.toLowerCase())	
         	&& (toot.getMitteAktiivneKuup() == "" && uusAkt == "Aktiivsed" 
         	   || toot.getMitteAktiivneKuup() != "" && uusAkt == "Mitte aktiivsed" 
         	   || uusAkt == "Kõik")
@@ -394,7 +468,7 @@ public class MainController implements Initializable {
 		return false;
 	}
 
-	
+//Mõttetu meetod	
 	public void MoniMeetod(ActionEvent e) {
 //		ObservableList<TootajaTabel> data = FXCollections.observableArrayList();
 //		Tootaja.esimesed(3).stream().map( p -> new TootajaTabel(p.nimi , p.id))
@@ -403,10 +477,13 @@ public class MainController implements Initializable {
 //		this.showTable.setItems(data);
 	}
 
+	
+//Annab töötaja tabelisse kõik töötajad	
 	public void nimeFilter(ActionEvent e) {
 		koikTootajad();
 	}
 	
+//Annab töötaja tabelisse kõik töötajad		
 	private void koikTootajad(){
 		cmbFilterStaatus.setValue("Kõik");
 		if (algus) { 
@@ -439,32 +516,40 @@ public class MainController implements Initializable {
 	void naitaOskusi (List<OskusUI> oskused){
 	}
 	
-	
+//Töötaja info muutmine kui vajutada salvesta nuppu	
 	public void muudaTootaja() {
 		
 		if (tootajaMuutmine){ //tootaja muutmine
+			
 			TootajaTabel tootaja = Main.nahtavTootaja;
 			
 			Tootaja t = Tootaja.tootajad.get(tootaja.getID().toString());
-			
-			t.nimi = txtNimi.getText();
-			tootaja.setNimi(t.nimi);
-			
-			t.amet = txtAmet.getText();
-			tootaja.setAmet(t.amet);
-			
-			
-			t.muudaAdmin(Main.praeguneKasutaja, chkAdmin.isSelected());
-			
-			if (cmbStaatus.getValue() == "Aktiivne"){
-				t.muudaAktiivne(Main.praeguneKasutaja, false);		
+			if (nimiMuudetud) {
+				t.muudaNimi(Main.praeguneKasutaja, txtNimi.getText());
+				tootaja.setNimi(t.nimi);
 			}
-			else if (cmbStaatus.getValue() == "Mitte aktiivne"){
-				t.muudaAktiivne(Main.praeguneKasutaja, true);
+
+			if (ametMuudetud){
+				t.muudaAmet(Main.praeguneKasutaja, txtAmet.getText());
+				tootaja.setAmet(t.amet);				
 			}
-			if (t.mitteAktiivneKuup != null) 
-				tootaja.setMitteAktiivneKuup(t.mitteAktiivneKuup.toString());
-			else tootaja.setMitteAktiivneKuup("");
+			
+			if (adminMuudetud) {
+			t.muudaAdmin(Main.praeguneKasutaja, chkAdmin.isSelected());				
+			}
+
+			if(staatusMuudetud){
+				if (cmbStaatus.getValue() == "Aktiivne"){
+					t.muudaAktiivne(Main.praeguneKasutaja, false);		
+				}
+				else if (cmbStaatus.getValue() == "Mitte aktiivne"){
+					t.muudaAktiivne(Main.praeguneKasutaja, true);
+				}
+				
+				if (t.mitteAktiivneKuup != null) 
+					tootaja.setMitteAktiivneKuup(t.mitteAktiivneKuup.toString());
+				else tootaja.setMitteAktiivneKuup("");
+			}
 			
 			txtID.editableProperty().setValue(false);
 			
@@ -493,6 +578,9 @@ public class MainController implements Initializable {
 	}
 	
 	
+/*Oskuste süsteemi lisamise akna avamine
+ * 	
+ */
 	public void lisaOskusSysteemi() throws IOException{
 		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/OskusSysteemi.fxml"));
@@ -513,7 +601,9 @@ public class MainController implements Initializable {
         dialog.show();
 	}
 	
-
+/*Töötajale oskuste lisamise akna avamine 
+ * 
+ */
 	public void lisaOskus(ActionEvent e) throws IOException{
 //		TootajaTabel tootaja = nahtavTootaja;
 		
@@ -539,8 +629,12 @@ public class MainController implements Initializable {
 	 }
 
 	
+/*Töötaja lisamise vaade (nuppude peitmine ja kuvamine
+)
+ * 	
+ */
 	public void lisaTootaja(ActionEvent e){
-		System.out.println("Lisan töötajat");
+//		System.out.println("Lisan töötajat");
 		nulliTootajaDet(true);
 		
 		lisaTootajaNupud(true);
@@ -548,7 +642,7 @@ public class MainController implements Initializable {
 		tootajaMuutmine = false;
 	}
 	
-	
+	//Tavakasutaja nuppude ja väljade nähtavuse muutmine
 	private void lisaTootajaNupud(Boolean nahtavus){
 		txtID.editableProperty().setValue(nahtavus);
 		acpYlemine.disableProperty().setValue(nahtavus);
@@ -558,6 +652,7 @@ public class MainController implements Initializable {
 	
 	}
 	
+	//Administraatori nuppude ja väljade nähtavuse muutmine
 	private void adminNupud(Boolean nahtavus){
 		chkAdmin.setVisible(nahtavus);
 		showTable.setVisible(nahtavus);
@@ -573,19 +668,21 @@ public class MainController implements Initializable {
 		txtMuudatused.setVisible(!nahtavus);
 		lblFilter.setVisible(nahtavus);
 		lblLogiPealkiri.setVisible(!nahtavus);
+		btnSulgeLogi.setVisible(nahtavus);
 	}
 	
-	public void katkestaLisaTootaja(){
-		
+	//Töötaja lisamisel katkesta nupp
+	public void katkestaLisaTootaja(){	
 		lisaTootajaNupud(false);
 		nulliTootajaDet(false);
 		tootajaMuutmine = true;
 		
 	}
 	
-	
-	void naitaTootajaDetaile (TootajaTabel tootaja){
-				
+	/*Töötaja detailse info näitamine vastavalt töötajate tabelis 
+	 * või kasutaja valikus valitutd töötajale
+	 */
+	void naitaTootajaDetaile (TootajaTabel tootaja){			
 		if (tootaja != null) {
 		        // Täida väljad töötaja andmetega
 			muudetavTootaja = tootaja;
@@ -639,6 +736,8 @@ public class MainController implements Initializable {
 	}
 	
 	
+	/*Tühjendab töötajate detailse info väljad 
+	 */
 	void nulliTootajaDet(Boolean nulli){
 		// Töötaja väljade tühjendamine vormil ja tabelite kasutamise mittevõimaldamine
 		if (nulli) {
@@ -664,12 +763,20 @@ public class MainController implements Initializable {
 	    nuppKoolitus.setDisable(nulli);
 	}
 	
+	
+	/*Näitab töötaja põhist logi töötajale
+	 * Kõige hilisem muudatus kõige üleval 
+	 */
 	public void naitaTootajaLogi(TootajaTabel tootaja){
 		txtMuudatused.setText(Muudatus.viimasedMuudatused(tootaja.getID().toString()).stream()
 				.map(p -> p.toString())
 				.collect(Collectors.joining("\n")));
 	}
 	
+	
+	/*Näitab töötaja põhist logi administraatorile 
+	 * ja lisab logi sulgemise nupu
+	 */
 	public void naitaAdminLogi(ActionEvent e){
 		adminNupud(false);
 		btnSulgeLogi.setVisible(true);
@@ -678,6 +785,7 @@ public class MainController implements Initializable {
 		}
 		else naitaTootajaLogi(showTable.getSelectionModel().getSelectedItem());
 	}
+	
 	
 	
 	public void sulgeAdminLogi(ActionEvent e){
@@ -695,14 +803,18 @@ public class MainController implements Initializable {
 				.collect(Collectors.joining("\n")));
 	}
 
+	
+	/*Otsisb koolituste nimekirjast vastava töötaja koolitused
+	 * ja näitab need tabelis
+	 */
 	public void annaKoolitused(){
 //		System.out.println("annaKoolitused");
 		dataKoolitused.clear();
 		
 		Koolitus.koolitused.entrySet().stream()
 			.map(Map.Entry::getValue)
-			.filter(p -> p.tootajaID.equals(txtID.getText()))
-			.map(p -> new KoolitusUI(p.id, p.tootajaID, p.kirjeldus, p.fail))
+			.filter(p -> p.annaTootajaID().equals(txtID.getText()))
+			.map(p -> new KoolitusUI(p.annaID(), p.annaTootajaID(), p.annaKirjeldus(), p.annaFail()))
 			.forEach(p -> dataKoolitused.add(p));
 		
 //		if (!txtID.getText().equals("")) dataKoolitused.add(new KoolitusUI(null, null, "lisa koolitus", "lisa fail"));
@@ -720,6 +832,10 @@ public class MainController implements Initializable {
 	    this.tblKoolitused.setItems(sortedKoolitus);
 	}
 	
+	
+	/*Näitab koolituse/eksami lisamise/muutmise akent
+	 * 
+	 */
 	public void lisaKoolitus(ActionEvent e) throws IOException{
 //		TootajaTabel tootaja = nahtavTootaja;
 		
@@ -749,11 +865,11 @@ public class MainController implements Initializable {
         dialog.show();    
 	 }
 	
-	public void avaKoolituseFail(ActionEvent e){
-
-		
-	}
 	
+	/*Avab koolitusele lisatud faili
+	 * topelt-klõpsuga.
+	 * Topelt-klõps on lisatud tabeli reale vaata
+	 */
 	public boolean editFile(File file) {
 		  if (!Desktop.isDesktopSupported()) {
 		    return false;

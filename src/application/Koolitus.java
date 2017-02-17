@@ -7,11 +7,11 @@ public class Koolitus implements Serializable{
 
 	static Map<String, Koolitus> koolitused = new HashMap<String, Koolitus>();
 	
-	String id;
-	String tootajaID;
-	String oskusID;
-	String kirjeldus;
-	String fail;
+	private String id;
+	private String tootajaID;
+	private String oskusID;
+	private String kirjeldus;
+	private String fail;
 	
 	private Koolitus(String tootajaID, String oskusID, String kirjeldus, String fail) {
 		this.tootajaID = tootajaID;
@@ -20,7 +20,7 @@ public class Koolitus implements Serializable{
 		this.fail = fail;
 		this.id = "T" + (koolitused.size() + 1);
 		koolitused.put(this.id, this);
-		new Muudatus(tootajaID, this.id, String.format("Uus koolitus lisatud %s (%s)", this.kirjeldus, this.id));
+		new Muudatus(tootajaID, this.id, String.format("Töötajale %s (%s) lisatud uus koolitus %s (%s)", Tootaja.tootajad.get(this.tootajaID), this.tootajaID, this.kirjeldus, this.id));
 	}
 	
 	
@@ -49,4 +49,30 @@ public class Koolitus implements Serializable{
 		return this;
 	}
 	
+	public String annaID() {
+		return this.id;
+	}
+	
+	public String annaTootajaID() {
+		return this.tootajaID;
+	}
+	
+	public String annaKirjeldus() {
+		return this.kirjeldus;
+	}
+	
+	public String annaFail(){
+		return this.fail;
+	}
+	
+	
+	public String toString(){
+		return String.format("%s", this.kirjeldus);
+	}
+
+
+
+
+	
 }
+

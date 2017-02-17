@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class Muudatus implements Serializable{
 	
 	static List<Muudatus> muutused = new ArrayList<Muudatus>();
-	static int loendur = 0;
+//	static int loendur = 0;
 	
 	String kes;
 	String mida;
@@ -18,7 +18,7 @@ public class Muudatus implements Serializable{
 	int id;
 
 	Muudatus(String kes, String mida, String kirjeldus){
-		this.id = loendur++;
+		this.id = muutused.size() + 1;
 		this.kes = kes;
 		this.mida = mida;
 		this.kirjeldus = kirjeldus;

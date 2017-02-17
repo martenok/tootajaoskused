@@ -23,7 +23,6 @@
         <menus>
           <Menu mnemonicParsing="false" text="Lõpetamine">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Vaheta kasutajat" />
               <MenuItem fx:id="mnuSulge" mnemonicParsing="false" text="Sulge" />
             </items>
           </Menu>
@@ -43,7 +42,7 @@
       </MenuBar>
       <SplitPane dividerPositions="0.48531139835487663" layoutX="6.0" layoutY="25.0" orientation="VERTICAL" prefHeight="835.0" prefWidth="918.0">
         <items>
-          <AnchorPane fx:id="acpYlemine" minHeight="0.0" minWidth="0.0" prefHeight="379.0" prefWidth="916.0">
+          <AnchorPane fx:id="acpYlemine" minHeight="0.0" minWidth="0.0" prefHeight="404.0" prefWidth="916.0">
                <children>
                   <TableView fx:id="showTable" accessibleRole="IMAGE_VIEW" layoutX="14.0" layoutY="73.0" prefHeight="292.0" prefWidth="657.0" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="245.0" AnchorPane.topAnchor="73.0">
                     <columns>

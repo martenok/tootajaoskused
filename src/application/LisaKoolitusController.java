@@ -26,7 +26,8 @@ import javafx.stage.WindowEvent;
  *
  */
 
-public class LisaKoolitusController implements Initializable {
+public class LisaKoolitusController //implements Initializable 
+{
 	public MainController mc = null;
 	public TootajaTabel muudetavTootaja;
 	public String koolitusID;
@@ -51,10 +52,10 @@ public class LisaKoolitusController implements Initializable {
     @FXML
     private Label lblTootaja;
     
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
-		
-	}
+//	@Override
+//	public void initialize(URL arg0, ResourceBundle arg1) {
+//		
+//	}
 	
     
 	public void pildiLaadimiseNupp(ActionEvent actionEvent) {
@@ -87,8 +88,8 @@ public class LisaKoolitusController implements Initializable {
 				Koolitus.lisaTunnistus(tootaja.id, txtKirjeldus.getText());
 			}
 			else {
-				Koolitus.koolitused.get(koolitusID).kirjeldus = txtKirjeldus.getText();
-				Koolitus.koolitused.get(koolitusID).fail = "";
+				Koolitus.koolitused.get(koolitusID).muudaKirjeldus(Main.praeguneKasutaja, txtKirjeldus.getText());
+				Koolitus.koolitused.get(koolitusID).muudaFail(Main.praeguneKasutaja, "");
 			}
 		}
 		
@@ -106,15 +107,13 @@ public class LisaKoolitusController implements Initializable {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				
-				
+	
 				if (koolitusID.equals("")){
 					Koolitus.lisaTunnistus(tootaja.id, null, txtKirjeldus.getText(), fail.getName());
 				}
 				else {
-					Koolitus.koolitused.get(koolitusID).kirjeldus = txtKirjeldus.getText();
-					Koolitus.koolitused.get(koolitusID).fail = fail.getName();
+					Koolitus.koolitused.get(koolitusID).muudaKirjeldus(Main.praeguneKasutaja, txtKirjeldus.getText());
+					Koolitus.koolitused.get(koolitusID).muudaFail(Main.praeguneKasutaja, fail.getName());
 				}
 				
 			}
@@ -137,8 +136,8 @@ public class LisaKoolitusController implements Initializable {
 	public void onShowing(WindowEvent e){
 		lblTootaja.setText(String.format("%s (%s)", muudetavTootaja.getNimi(), muudetavTootaja.getID()));
 		if (!koolitusID.equals("")) {
-			txtKirjeldus.setText(Koolitus.koolitused.get(koolitusID).kirjeldus);
-			if (Koolitus.koolitused.get(koolitusID).fail != null) txtFail.setText(Koolitus.koolitused.get(koolitusID).fail);
+			txtKirjeldus.setText(Koolitus.koolitused.get(koolitusID).annaKirjeldus());
+			if (Koolitus.koolitused.get(koolitusID).annaFail() != null) txtFail.setText(Koolitus.koolitused.get(koolitusID).annaFail());
 		}
 
 	}
